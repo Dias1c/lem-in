@@ -1,0 +1,34 @@
+10
+##start
+b 0 0
+a 0 1
+c 1 0
+e 1 1
+d 1 2
+f 2 1
+g 2 2
+i 2 3
+j 3 2
+k 3 1
+h 1 3
+l 4 1
+n 4 2
+##end
+m 10 10
+b-a
+b-c
+b-e
+a-d
+d-i
+i-j
+j-m
+c-f
+f-g
+g-j
+g-k
+k-m
+e-h
+e-g
+h-l
+l-n
+n-m

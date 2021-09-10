@@ -19,7 +19,15 @@ func RunProgramWithFile(path string) {
 func RunProgramWithContent(content string) {
 	lines := strings.Split(content, "\n")
 	terrain, err := getTerrainFromLines(lines)
-	fmt.Printf("Terrain: %q\nError: %v\n", terrain, err)
+	if err != nil {
+		CloseProgram(err)
+	}
+	fmt.Println("Rooms: Name\tX:\tY:")
+	for _, room := range terrain.Rooms {
+		fmt.Printf("Room: %v  \t%d\t%d\n", room.Name, room.X, room.Y)
+	}
+	fmt.Printf("StartRoom: %v\nEndRoom: %v\nCountAnts: %v\nError: %v\n", terrain.Start, terrain.End, terrain.AntsCount, err)
+	// fmt.Printf("Terrain: %q\nError: %v\n", terrain, err)
 }
 
 // CloseProgram - Closing program. And if `error == nil` exit code will be 0
