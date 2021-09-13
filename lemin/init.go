@@ -3,19 +3,10 @@ package lemin
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"regexp"
 	"strconv"
 	"strings"
 )
-
-func getFileContent(path string) (string, error) {
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
 
 // getCountAntsFromLine - returns count ants, Changes size if line
 func getCountAntsFromLine(lines *[]string) (int, error) {
@@ -29,7 +20,7 @@ func getCountAntsFromLine(lines *[]string) (int, error) {
 	countAnts := -1
 	for i, line := range *lines {
 		startIdx = i + 1
-		if strings.HasPrefix(line, "#") {
+		if strings.HasPrefix(line, "#") || line == "" {
 			continue
 		} else {
 			countAnts, err = strconv.Atoi(line)
@@ -72,7 +63,7 @@ func getRoomsFromLines(lines *[]string) (map[string]*room, string, string, error
 				startIdx++
 				if i < size {
 					line = (*lines)[i]
-					room := GetRoomFromLine(line)
+					room := getRoomFromLine(line)
 					if room == nil {
 						return nil, "", "", errors.New("invalid rooms for start or end not found")
 					} else if isStart && startRoom == "" {
@@ -88,9 +79,11 @@ func getRoomsFromLines(lines *[]string) (map[string]*room, string, string, error
 			default:
 				continue
 			}
+		} else if line == "" {
+			continue
 		}
 		// Take rooms or break if is not valid room
-		room := GetRoomFromLine(line)
+		room := getRoomFromLine(line)
 		if room == nil {
 			startIdx = startIdx - 1
 			break
@@ -101,13 +94,17 @@ func getRoomsFromLines(lines *[]string) (map[string]*room, string, string, error
 		rooms[room.Name] = room
 	}
 	if startRoom == "" || endRoom == "" {
-		return nil, "", "", errors.New("invalid rooms for start or end not found")
+		msg := "invalid rooms for start or end not found."
+		if len(*lines) > startIdx {
+			msg += fmt.Sprintf(" Maybe problem with %q", (*lines)[startIdx])
+		}
+		return nil, "", "", fmt.Errorf(msg)
 	}
 	*lines = (*lines)[startIdx:]
 	return rooms, startRoom, endRoom, nil
 }
 
-// setPathsFromLines - set
+// setPathsFromLines - set paths
 func setPathsFromLines(lines *[]string, rooms map[string]*room) error {
 	err := errors.New("SetPathsFromLines: Lines == nil")
 	if lines == nil {
@@ -121,7 +118,7 @@ func setPathsFromLines(lines *[]string, rooms map[string]*room) error {
 	pattern, err := regexp.Compile(fmt.Sprintf(`^(%v)\-(%v)$`, PatternRoomName, PatternRoomName))
 	for i, line := range *lines {
 		startIdx = i + 1
-		if strings.HasPrefix(line, "#") {
+		if strings.HasPrefix(line, "#") || line == "" {
 			continue
 		} else {
 			if isCorrect := pattern.MatchString(line); isCorrect {
@@ -129,7 +126,7 @@ func setPathsFromLines(lines *[]string, rooms map[string]*room) error {
 				//Set Paths
 				nameFrom := submatch[1]
 				nameTo := submatch[2]
-				fmt.Printf("%v - %v\n", nameFrom, nameTo)
+				// fmt.Printf("%v - %v\n", nameFrom, nameTo)
 				if _, roomFound := rooms[nameFrom]; !roomFound {
 					return fmt.Errorf("unknown room name: %q", nameFrom)
 				} else if _, roomFound := rooms[nameTo]; !roomFound {
@@ -137,6 +134,7 @@ func setPathsFromLines(lines *[]string, rooms map[string]*room) error {
 				}
 
 				// Реализовать добавление путей для комнат + проверка
+				addPath(rooms, nameFrom, nameTo)
 			} else {
 				return fmt.Errorf("invalid path: %q", line)
 			}

@@ -1,6 +1,7 @@
 package lemin
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"regexp"
@@ -20,7 +21,7 @@ type room struct {
 }
 
 // GetRoomFromLine - Returns nil if line incorrect
-func GetRoomFromLine(line string) *room {
+func getRoomFromLine(line string) *room {
 	pattern, err := regexp.Compile(fmt.Sprintf(`^(%v) (\d{1,}) (\d{1,})$`, PatternRoomName))
 	if err != nil {
 		log.Printf("GetRoomFromLine: %v", err)
@@ -41,4 +42,19 @@ func GetRoomFromLine(line string) *room {
 		Y:     coory,
 		Paths: make(map[string]*room, 1),
 	}
+}
+
+// addPath - adds paths for both rooms
+func addPath(rooms map[string]*room, from, to string) error {
+	if rooms == nil {
+		return errors.New("addPath: rooms is nil")
+	}
+	roomFrom, isFromExist := rooms[from]
+	roomTo, isToExist := rooms[to]
+	if !isFromExist || !isToExist {
+		return fmt.Errorf("invalid room names on paths: %q-%q", from, to)
+	}
+	rooms[from].Paths[to] = roomTo
+	rooms[to].Paths[from] = roomFrom
+	return nil
 }
