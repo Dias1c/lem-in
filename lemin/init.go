@@ -17,7 +17,7 @@ func getCountAntsFromLine(lines *[]string) (int, error) {
 		return 0, errors.New("invalid number of Ants")
 	}
 	startIdx := 0
-	countAnts := -1
+	countAnts := 0
 	for i, line := range *lines {
 		startIdx = i + 1
 		if strings.HasPrefix(line, "#") || line == "" {
