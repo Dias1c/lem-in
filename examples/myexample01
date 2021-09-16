@@ -1,0 +1,75 @@
+1
+##start
+start 0 0
+##end
+end 0 1
+
+# lvl 1
+j 1 1
+k 1 2
+d 1 3
+e 1 4
+a 1 5
+
+# lvl 2
+u 2 1
+f 2 2
+g 2 3
+q 2 4
+c 2 5
+b 2 6
+
+# lvl 3
+t 3 1
+l 3 2
+m 3 3
+n 3 4
+r 3 5
+s 3 6
+
+# lvl 4
+w 4 1
+
+#Bad Paths
+o 10 1
+p 10 2
+x 100 1
+z 100 2
+y 100 3
+
+start-j
+start-k
+start-d
+start-e
+start-a
+j-k
+
+k-u
+d-f
+f-g
+e-g
+e-q
+e-c
+a-b
+c-q
+
+u-t
+g-l
+q-m
+c-r
+b-r
+b-s
+
+r-n
+l-m
+r-w
+
+m-end
+n-end
+
+#Bads
+o-p
+x-z
+z-y
+end-x
+end-y

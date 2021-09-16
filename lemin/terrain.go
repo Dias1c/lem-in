@@ -1,11 +1,15 @@
 package lemin
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type terrain struct {
 	AntsCount  int              // Count Ants in Terrain
 	Start, End string           // Start, End Room Names
 	Rooms      map[string]*room // map["RoomName"]*Room
+	Paths      []*paths         // Paths
 }
 
 // getTerrainFromLines = Constructor.
@@ -22,7 +26,7 @@ func getTerrainFromLines(lines []string) (*terrain, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &terrain{AntsCount: countAnts, Rooms: rooms, Start: startRoom, End: endRoom}, nil
+	return &terrain{AntsCount: countAnts, Rooms: rooms, Start: startRoom, End: endRoom, Paths: []*paths{}}, nil
 }
 
 // IsCorrect - Checks terrain for correct.
@@ -96,6 +100,16 @@ func (t *terrain) Validate() error {
 }
 
 // Match - To Do
-func (*terrain) Match() (string, error) {
-	return "", nil
+func (t *terrain) Match() (string, error) {
+	if t.Paths == nil {
+		t.Paths = []*paths{}
+	}
+	levels := t.GetLevels()
+	PrintLevels(levels)
+	t.RemoveUselessFromLevels(levels)
+	PrintLevels(levels)
+	if len(t.Paths) == 0 {
+		return "", errors.New("Paths NOT FOUND")
+	}
+	return fmt.Sprintf("Paths:\n%+v\n", t.Paths), nil
 }

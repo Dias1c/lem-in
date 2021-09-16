@@ -1,8 +1,9 @@
 1
 ##start
-a 0 0
+start 0 0
+s 1 1
+e 2 2
 ##end
-b 1 1
-a-b
-a-b
-b-a
+end 1000 1000
+start-s
+e-end

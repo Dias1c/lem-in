@@ -27,6 +27,11 @@ func GetResultByContent(content string) (string, error) {
 	}
 	// Add Start Match witch get result by lines or string
 	PrintTerrainDatas(terrain)
+	result, err := terrain.Match()
+	if err != nil {
+		return "Incorrect", err
+	}
+	fmt.Println(result)
 	return "Correct", nil
 }
 
