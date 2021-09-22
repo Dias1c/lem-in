@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="./assets/css/buttons.css">
+    <link rel="stylesheet" type="text/css" href="./assets/css/index.css">
+    <link rel="stylesheet" type="text/css" href="./assets/css/window.css">
+    <link rel="stylesheet" type="text/css" href="./assets/css/default.css">
+
+    <link rel="shortcut icon" href="./assets/icons/ant.svg" type="image/x-icon">
+    <title>Lem-in</title>
+</head>
+
+<body>
+    <div class="main">
+        <!-- HEADER -->
+        <div class="header card">
+            <div class="card_title">Lem-in</div>
+        </div>
+        <!-- CONTENT -->
+        <div class="content">
+            <div class="content_left card">
+                <div class="card_title">Sender Form</div>
+                <div class="form">
+                    <div class="input_group">
+                        <label class="input_title">Input map</label>
+                        <textarea name="input_text" class="input_text" id="tb_Content" minlength="1" placeholder="#Example        <- Comment
+10              <- Count ants
+##start         <- It means next line is start room
+StartRoom 1 1   <- Start Room
+##end           <- It means next line is start room
+EndRoom 2 2     <- Target Room
+hole 4 6        <- Any room
+bath 4 2        <- Any room
+#Paths          <- Comment
+StartRoom-hole  <- Room Relations
+hole-bath       <- Room Relations
+bath-EndRoom    <- Room Relations
+"></textarea>
+                    </div>
+                    <button class="btn" id="btn_SendContent">Send</button>
+                </div>
+            </div>
+            <div class="content_right card">
+                <div class="card_title">Result</div>
+                <div class="block">
+
+                    <label class="input_title">Graphic result</label>
+                    <div class="result">
+                        <canvas></canvas>
+                    </div>
+                </div>
+                <div class="input_group">
+                    <label class="input_title">Text result</label>
+                    <textarea class="input_text" id="tb_Result"></textarea>
+                </div>
+            </div>
+        </div>
+        <!-- FOOTER -->
+        <div class="footer card">
+            <div class="card_title">FOOTER</div>
+        </div>
+    </div>
+    <div class="window  card" id="window">
+        <div class="window__top">
+            <h3 class="window__title" id="windowTitle">Title</h3>
+            <button class="btn btn--close" id="windowClose"></button>
+        </div>
+        <div class="window__content ">
+            <p class="window__text" id="windowText">Here is text.</p>
+            <div class="window__action">
+                <button class="btn" id="windowAction">Ok</button>
+            </div>
+
+        </div>
+    </div>
+    <!-- SCRIPTS -->
+    <script src="./assets/js/index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+.btn{
+    display: block;
+    box-sizing: border-box;
+    padding: 8px 16px;
+    /* border: 1px solid #000; */
+    border: none;
+    border-radius: 2px;
+    
+    font-weight: 600;
+    text-align: center;
+    
+    background-color: #fff;
+    box-shadow: rgba(255, 255, 255, 0.2) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.9) 0px 0px 0px 1px;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.btn:hover, .btn:focus{
+    box-shadow: rgba(0, 80, 199, 0.2) 0px 0px 0px 2px inset, rgba(0, 0, 0, 0.9) 0px 0px 0px 1px;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn:disabled {
+    background-color: #BABECC;
+    box-shadow: none;
+    cursor:not-allowed;
+}
+
+.btn--close{
+    position: relative;
+    display: block;
+    padding: 8px;
+    width: max-content;
+    height: max-content;
+    background-color: rgb(255, 29, 29);
+}
+.btn--close::before, .btn--close::after{
+    content: "";
+    display: block;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    
+    width: 80%;
+    height: 12%;
+    background-color: #000;
+    border-radius: 10px;
+}
+.btn--close::before{
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+.btn--close::after{
+    transform: translate(-50%, -50%) rotate(-45deg);
+}

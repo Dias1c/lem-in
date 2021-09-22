@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"lem-in/lemin"
+	"lem-in/web"
 )
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 	//Start Program
 	if strings.HasPrefix(argument, "--") { //if has flags
 		if *port != "" {
-			fmt.Printf("Work Port in %q\nNot working now!\n", *port)
+			web.RunServer(*port)
 		} else if *filename != "" {
 			lemin.RunProgramWithFile(*filename)
 		} else { //Default = Help

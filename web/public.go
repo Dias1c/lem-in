@@ -2,23 +2,48 @@ package web
 
 import (
 	"fmt"
-	"os"
+	"log"
+	"net/http"
+	"time"
+
+	general "lem-in/general"
+	routes "lem-in/web/routes"
+	routesApi "lem-in/web/routes/api"
 )
 
 // RunServer - starts server with setted port
 func RunServer(port string) {
-	err := validatePort(port)
+	var err error
+	err = validatePort(port)
 	if err != nil {
-		CloseProgram(err)
+		general.CloseProgram(err)
 	}
-	// Init templates + Handlers + Run Server (To Do)
-}
+	err = routes.InitTemplates()
+	if err != nil {
+		general.CloseProgram(err)
+	}
 
-// CloseProgram - Closing program. And if `error == nil` exit code will be 0
-func CloseProgram(err error) {
-	if err != nil {
-		fmt.Printf("ERROR: %v\n", err.Error())
-		os.Exit(1)
+	// Init Handlers + Run Server (To Do)
+	mux := http.NewServeMux()
+	// FS
+	assets := http.FileServer(http.Dir("web/public/assets/"))
+	mux.Handle("/assets/", http.StripPrefix("/assets/", assets))
+	// Pages
+	mux.HandleFunc("/", routes.IndexHandler) // Index Page
+	// APIs
+	mux.HandleFunc("/api/lemin", routesApi.LeminHandler)
+	// Start Listen
+	addr := fmt.Sprintf("localhost%v", port)
+	server := http.Server{
+		Addr:         addr,
+		Handler:      mux,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  15 * time.Second,
 	}
-	os.Exit(0)
+	log.Printf("Server started on http://%v", addr)
+	err = server.ListenAndServe()
+	if err != nil {
+		general.CloseProgram(err)
+	}
 }

@@ -16,15 +16,15 @@ type terrain struct {
 func getTerrainFromLines(lines []string) (*terrain, error) {
 	countAnts, err := getCountAntsFromLine(&lines)
 	if err != nil {
-		return nil, err
+		return nil, errInvalidDataFormat(err)
 	}
 	rooms, startRoom, endRoom, err := getRoomsFromLines(&lines)
 	if err != nil {
-		return nil, err
+		return nil, errInvalidDataFormat(err)
 	}
 	err = setPathsFromLines(&lines, rooms)
 	if err != nil {
-		return nil, err
+		return nil, errInvalidDataFormat(err)
 	}
 	return &terrain{AntsCount: countAnts, Rooms: rooms, Start: startRoom, End: endRoom, Paths: []*paths{}}, nil
 }
@@ -103,13 +103,12 @@ func (t *terrain) Validate() error {
 func (t *terrain) Match() (string, error) {
 	if t.Paths == nil {
 		t.Paths = []*paths{}
+	} else if !t.HasItPath() {
+		return "", errors.New("paths not found")
 	}
 	levels := t.GetLevels()
 	PrintLevels(levels)
 	t.RemoveUselessFromLevels(levels)
 	PrintLevels(levels)
-	if len(t.Paths) == 0 {
-		return "", errors.New("Paths NOT FOUND")
-	}
 	return fmt.Sprintf("Paths:\n%+v\n", t.Paths), nil
 }

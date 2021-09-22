@@ -2,14 +2,15 @@ package lemin
 
 import (
 	"fmt"
-	"os"
+
+	"lem-in/general"
 )
 
 // RunProgramWithFile - path is filepath
 func RunProgramWithFile(path string) {
 	fileContent, err := getFileContent(path)
 	if err != nil {
-		CloseProgram(err)
+		general.CloseProgram(err)
 	}
 	RunProgramWithContent(fileContent)
 }
@@ -32,23 +33,15 @@ func GetResultByContent(content string) (string, error) {
 		return "Incorrect", err
 	}
 	fmt.Println(result)
-	return "Correct", nil
+
+	return fmt.Sprintf("%v\n\n#Result:\n%v", content, result), nil
 }
 
 // RunProgramWithContent - content is filecontent
 func RunProgramWithContent(content string) {
 	result, err := GetResultByContent(content)
 	if err != nil {
-		CloseProgram(err)
+		general.CloseProgram(err)
 	}
 	fmt.Println(result)
-}
-
-// CloseProgram - Closing program. And if `error == nil` exit code will be 0
-func CloseProgram(err error) {
-	if err != nil {
-		fmt.Printf("ERROR: %v\n", err.Error())
-		os.Exit(1)
-	}
-	os.Exit(0)
 }
