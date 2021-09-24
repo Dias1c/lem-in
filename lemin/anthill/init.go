@@ -1,4 +1,4 @@
-package lemin
+package anthill
 
 import (
 	"errors"
@@ -71,7 +71,7 @@ func getRoomsFromLines(lines *[]string) (map[string]*room, string, string, error
 					} else if !isStart && endRoom == "" {
 						endRoom = room.Name
 					} else {
-						return nil, "", "", errors.New("there can be only 1 starting and 1 ending rooms on the terrain")
+						return nil, "", "", errors.New("there can be only 1 starting and 1 ending rooms on the anthill")
 					}
 				} else {
 					return nil, "", "", errors.New("invalid rooms for start or end not found")
@@ -116,6 +116,9 @@ func setPathsFromLines(lines *[]string, rooms map[string]*room) error {
 	}
 	startIdx := 0
 	pattern, err := regexp.Compile(fmt.Sprintf(`^(%v)\-(%v)$`, PatternRoomName, PatternRoomName))
+	if err != nil {
+		return err
+	}
 	for i, line := range *lines {
 		startIdx = i + 1
 		if strings.HasPrefix(line, "#") || line == "" {

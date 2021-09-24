@@ -1,4 +1,4 @@
-package lemin
+package anthill
 
 import (
 	"errors"
@@ -18,6 +18,8 @@ type room struct {
 	AntsCount int              // Count Ants in room
 	X, Y      int              // Coordinates
 	Paths     map[string]*room // Adjacent rooms
+	Costs     map[string]byte  // Cost For Every Room in Path
+	PrevRoom  *room            // From Wich room did you come?
 }
 
 // GetRoomFromLine - Returns nil if line incorrect
@@ -41,6 +43,7 @@ func getRoomFromLine(line string) *room {
 		X:     coorx,
 		Y:     coory,
 		Paths: make(map[string]*room, 1),
+		Costs: make(map[string]byte, 1),
 	}
 }
 
@@ -56,5 +59,8 @@ func addPath(rooms map[string]*room, from, to string) error {
 	}
 	rooms[from].Paths[to] = roomTo
 	rooms[to].Paths[from] = roomFrom
+
+	rooms[from].Costs[to] = 1
+	rooms[to].Costs[from] = 1
 	return nil
 }
