@@ -6,12 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="./assets/css/buttons.css">
     <link rel="stylesheet" type="text/css" href="./assets/css/index.css">
     <link rel="stylesheet" type="text/css" href="./assets/css/window.css">
+    <link rel="stylesheet" type="text/css" href="./assets/css/graph.css">
     <link rel="stylesheet" type="text/css" href="./assets/css/default.css">
-
+    <!-- Icon -->
     <link rel="shortcut icon" href="./assets/icons/ant.svg" type="image/x-icon">
     <title>Lem-in</title>
 </head>
@@ -20,11 +22,17 @@
     <div class="main">
         <!-- HEADER -->
         <div class="header card">
-            <div class="card_title">Lem-in</div>
+            <div class="header__title"><a class="link" href="">Lem-in</a></div>
+            <div class="header__menu">
+                <a class="header__menu__element" href="#b_main">Main</a>
+                <a class="header__menu__element" href="#b_what-the-project">About</a>
+                <a class="header__menu__element" href="#b_how-to-use">Help</a>
+                <a class="header__menu__element" href="#b_footer">Authors</a>
+            </div>
         </div>
         <!-- CONTENT -->
         <div class="content">
-            <div class="content_left card">
+            <div class="content_left card" id="b_main">
                 <div class="card_title">Sender Form</div>
                 <div class="form">
                     <div class="input_group">
@@ -48,22 +56,61 @@ bath-EndRoom    <- Room Relations
             </div>
             <div class="content_right card">
                 <div class="card_title">Result</div>
-                <div class="block">
-
-                    <label class="input_title">Graphic result</label>
-                    <div class="result">
-                        <canvas></canvas>
+                <div class="block block--flex">
+                    <div class="block_l">
+                        <label class="input_title">Graphic result</label>
+                        <div class="result" id="b_result">
+                        </div>
+                    </div>
+                    <div class="block_r">
+                        <label class="input_title">Menu</label>
+                        <div class="result__menu">
+                            <div class="input_group">
+                                <div class="group group--flex">
+                                    <label class="input_title">Frame</label>
+                                    <label class="input_title" id="l_FrameInfo">0/0</label>
+                                </div>
+                                <input class="input_range" id="tb_FrameIndex" type="range" min="0" max="0"
+                                    value="0"></input>
+                            </div>
+                            <button class="btn" id="btn_Animate">Start Animate</button>
+                            <div class="input_group">
+                                <label class="input_title">Tile Size (px)</label>
+                                <input class="input_number" id="tb_TileSize" type="number" value="20"></input>
+                            </div>
+                            <div class="input_group">
+                                <label class="input_title">Circle Radius / Line Width (px)</label>
+                                <input class="input_number" id="tb_CircleRadius" type="number" value="10"></input>
+                            </div>
+                            <div class="input_group">
+                                <label class="input_title">Transition (ms)</label>
+                                <input class="input_number" id="tb_Transition" type="number" value="200"></input>
+                            </div>
+                            <button class="btn" id="btn_SetParams">Set Params</button>
+                        </div>
                     </div>
                 </div>
                 <div class="input_group">
-                    <label class="input_title">Text result</label>
+                    <label class="input_title">Text result (Using for Graphic)</label>
                     <textarea class="input_text" id="tb_Result"></textarea>
+                </div>
+                <div class="block" id="b_what-the-project">
+                    <div class="card_title">What the project</div>
+                    <p>TODO Write After write ReadMe</p>
+                </div>
+                <div class="block" id="b_how-to-use">
+                    <div class="card_title">How To Use?</div>
+                    <p>TODO Write After write ReadMe</p>
                 </div>
             </div>
         </div>
         <!-- FOOTER -->
-        <div class="footer card">
-            <div class="card_title">FOOTER</div>
+        <div class="footer card" id="b_footer">
+            <div class="card_text">
+                Author <a href="https://github.com/Dias1c" class="link">Dias1c</a> | Git <a
+                    href="https://github.com/Dias1c/lem-in" class="link">Project</a>
+            </div>
+
         </div>
     </div>
     <div class="window  card" id="window">
@@ -72,14 +119,15 @@ bath-EndRoom    <- Room Relations
             <button class="btn btn--close" id="windowClose"></button>
         </div>
         <div class="window__content ">
-            <p class="window__text" id="windowText">Here is text.</p>
+            <pre class="window__text" id="windowText">Here is text.</pre>
             <div class="window__action">
                 <button class="btn" id="windowAction">Ok</button>
             </div>
-
         </div>
     </div>
     <!-- SCRIPTS -->
+    <script src="./assets/js/d3.min.js"></script>
+    <script src="./assets/js/graph.js"></script>
     <script src="./assets/js/index.js"></script>
 </body>
 

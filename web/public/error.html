@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Style -->
+    <link rel="stylesheet" type="text/css" href="./assets/css/window.css">
+    <link rel="stylesheet" type="text/css" href="./assets/css/buttons.css">
+    <link rel="stylesheet" type="text/css" href="./assets/css/default.css">
+    <!-- Icon -->
+    <link rel="shortcut icon" href="./assets/icons/ant.svg" type="image/x-icon">
+    <title>ERROR</title>
+</head>
+
+<body>
+    <div class="window card" style="display: block;" id="window">
+        <div class="window__top">
+            <h3 class="window__title" id="windowTitle">Error</h3>
+            <button class="btn btn--close" id="windowClose"></button>
+        </div>
+        <div class="window__content ">
+            <pre class="window__text" id="windowText">{{ .Message }}</pre>
+            <div class="window__action">
+                <a href="/" class="btn" id="windowAction">Go Main</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+circle{
+    /* stroke:#dfdfdf; */
+    stroke:#f9f9f9;
+    stroke-width:3px;
+    animation: showcircle 0.1s 1 ease-out;
+    transition-timing-function: ease-out;
+}
+
+text {
+    animation: showcircle .2s 1 ease-out;
+}
+
+line{
+    stroke:#dfdfdf;
+    animation: showcircle .3s 1 ease-out;
+}
+
+
+@keyframes showcircle {
+    0%{
+        /* opacity: 0; */
+        transform: scale(0);
+        /* width: 10px; */
+    }
+    100%{
+        /* opacity: 1; */
+        transform: scale(1);
+        /* width: 100px; */
+    }
+}

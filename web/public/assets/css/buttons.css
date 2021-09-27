@@ -2,17 +2,23 @@
     display: block;
     box-sizing: border-box;
     padding: 8px 16px;
+    margin: 0 0 10px 0;
     /* border: 1px solid #000; */
     border: none;
     border-radius: 2px;
     
     font-weight: 600;
     text-align: center;
+    text-decoration: none;
+    color: inherit;
     
     background-color: #fff;
     box-shadow: rgba(255, 255, 255, 0.2) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.9) 0px 0px 0px 1px;
     cursor: pointer;
     transition: box-shadow 0.2s ease-in-out;
+}
+.btn:last-child{
+    margin: 0;
 }
 
 .btn:hover, .btn:focus{
@@ -25,8 +31,8 @@
 
 .btn:disabled {
     background-color: #BABECC;
-    box-shadow: none;
     cursor:not-allowed;
+    box-shadow: none;
 }
 
 .btn--close{
