@@ -1,7 +1,6 @@
 package anthill
 
 import (
-	"container/list"
 	"fmt"
 )
 
@@ -27,12 +26,20 @@ func (r *room) PrintRoomInfo() {
 	fmt.Printf("Room: %q, Pos: %d, %d;\nRooms: %+v\n", r.Name, r.X, r.Y, r.Paths)
 }
 
-func PrintRoomsInLinkedList(l *list.List) {
-	fmt.Println("PrintRoomsInLinkedList:")
-	for n := l.Front(); n != nil; n = n.Next() {
-		t := n.Value.(*room)
+func (r *room) PrintRoomCosts() {
+	if r == nil {
+		fmt.Println("Room is Nil")
+		return
+	}
+	fmt.Printf("Room: %q, Costs: %+v\n", r.Name, r.Costs)
+}
+
+func PrintRoomsInLinkedList(l *path) {
+	// fmt.Println("PrintRoomsInLinkedList:")
+	for n := l.Front; n != nil; n = n.Next {
+		t := n.Room
 		fmt.Printf("%v", t.Name)
-		if n.Next() != nil {
+		if n.Next != nil {
 			fmt.Print(" -> ")
 		}
 	}

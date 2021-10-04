@@ -1,94 +1,29 @@
 package anthill
 
 import (
-	"container/list"
 	"fmt"
 )
 
-func (a *anthill) HasItPath() bool {
-	moved := map[string]bool{a.Start: true}
-	stack := []*room{a.Rooms[a.Start]}
-	stackSize := 1
-
-	for stackSize > 0 {
-		for name := range stack[0].Paths {
-			if name == a.End {
-				return true
-			} else if !moved[name] {
-				stack = append(stack, a.Rooms[name])
-				stackSize++
-			}
-		}
-		stack = stack[1:]
-		stackSize--
-	}
-	return false
-}
-
-func (a *anthill) GetUsableRooms() (map[string]bool, error) {
-	//Get all using Rooms from start to end and from end to start
-	startEnd, err := a.GetUsingRoomNamesFromTo(a.Start, a.End)
-	if err != nil {
-		return nil, err
-	}
-	endStart, err := a.GetUsingRoomNamesFromTo(a.End, a.Start)
-	if err != nil {
-		return nil, err
-	}
-	// Set Rooms wich in Start + End
-	result := make(map[string]bool, len(startEnd))
-	removedRooms := make(map[string]bool) // Delete it
-	for name := range startEnd {
-		if endStart[name] {
-			result[name] = true
-		} else {
-			removedRooms[name] = true
-		}
-	}
-	result[a.Start] = true
-	result[a.End] = true
-	fmt.Printf("Removed Roooms: %+v\n", removedRooms)
-	return result, nil
-}
-
-func (a *anthill) GetUsingRoomNamesFromTo(from, to string) (map[string]bool, error) {
-	if a.Rooms[from] == nil || a.Rooms[to] == nil {
-		return nil, fmt.Errorf("GetUsingRoomNamesFromTo: RoomFrom: %s (%+v) or RoomTo: %s (%+v) not found!", from, a.Rooms[from], to, a.Rooms[to])
-	}
-	countRooms := len(a.Rooms)
-	moved := make(map[string]bool, countRooms)
-	moved[from] = true
-	moved[to] = true
-	// Start Match
-	stack := []*room{a.Rooms[from]}
-	remains := 1
-	for remains > 0 {
-		for name := range stack[0].Paths {
-			if !moved[name] {
-				stack = append(stack, a.Rooms[name])
-				remains++
-				moved[name] = true
-			}
-		}
-		stack = stack[1:]
-		remains--
-	}
-	delete(moved, from)
-	delete(moved, to)
-	return moved, nil
-}
-
-func FindOneShortestPathByCost(from, to *room, usableRooms map[string]bool) *list.List {
+func FindOneShortestPathByCost(from, to *room, usableRooms map[string]bool) *path {
 	stack, stackSize := []*room{from}, 1
-	movedRooms := make(map[string]bool, 2)
+	prevRooms := make(map[*room]*room, len(usableRooms))
+	movedRooms := make(map[string]bool, len(usableRooms))
 	movedRooms[from.Name] = true
 
 	isFind := false
 	for stackSize > 0 && !isFind {
 		curRoom := stack[0]
+		var wantedCost int8 = 1
+		if curRoom.PrevRoom != nil {
+			wantedCost = -1
+			if curRoom.PrevRoom != nil {
+				curRoom.PrevRoom.PrevRoom = nil
+			}
+		}
 		for name, room := range curRoom.Paths {
-			if usableRooms[name] && !movedRooms[name] && curRoom.Costs[name] == 1 {
-				room.PrevRoom = curRoom
+			if usableRooms[name] && !movedRooms[name] && curRoom.Costs[name] == wantedCost {
+				// room.PrevRoom = curRoom
+				prevRooms[room] = curRoom
 				stack = append(stack, room)
 				stackSize++
 				if room == to {
@@ -104,31 +39,112 @@ func FindOneShortestPathByCost(from, to *room, usableRooms map[string]bool) *lis
 	if !isFind {
 		return nil
 	}
-	result := list.New()
-	curRoom := to
-	prevRoom := curRoom.PrevRoom
-	for curRoom != from {
+	result := &path{}
+	result.PushFront(to)
+	curRoom := prevRooms[to]
+	// prevRoom := prevRooms[curRoom]
+	for curRoom != nil {
+		curRoom.Costs[result.Front.Room.Name] = 0
+		result.Front.Room.Costs[curRoom.Name] = -1
+		result.Front.Room.PrintRoomCosts()
+		curRoom.PrevRoom = prevRooms[curRoom]
 		result.PushFront(curRoom)
-		prevRoom.Costs[curRoom.Name] = 0
-		curRoom = prevRoom
-		prevRoom = curRoom.PrevRoom
+
+		// curRoom.PrintRoomCosts()
+		curRoom = curRoom.PrevRoom
 	}
-	result.PushFront(curRoom)
+	result.Front.Room.PrintRoomCosts()
+	result.RemoveFront()
+
+	fmt.Println("Finded new Path")
 	PrintRoomsInLinkedList(result)
 	return result
 }
 
-func (a *anthill) SetBestPathsForCountAnts() error {
-	usableRooms, err := a.GetUsableRooms()
-	if err != nil {
-		return err
+func getCountStepsForAllPaths(paths []*path, antsCount int) int {
+	steps := 0
+	cntAntsOnFinish := make(map[int]int, len(paths))
+	for _, path := range paths {
+		cntAntsOnFinish[path.Len-1] += 1
 	}
-	fmt.Println("SetBestPathsForCountAnts")
-	// Start Match
-	FindOneShortestPathByCost(a.Rooms[a.Start], a.Rooms[a.End], usableRooms)
-	FindOneShortestPathByCost(a.Rooms[a.Start], a.Rooms[a.End], usableRooms)
-	FindOneShortestPathByCost(a.Rooms[a.Start], a.Rooms[a.End], usableRooms)
-	// Set Paths
-	// Match CountSteps
+	if _, isHave := cntAntsOnFinish[0]; isHave {
+		return 1
+	}
+	curFinishFlow := 0
+	for ; antsCount > 0; steps++ {
+		curFinishFlow += cntAntsOnFinish[steps]
+		antsCount -= curFinishFlow
+	}
+	return steps
+}
+
+func organizeIndependentPaths(paths []*path) error {
+	if len(paths) < 2 {
+		return nil
+	}
+	fmt.Println("organizeIndependentPaths: Before")
+	for _, v := range paths {
+		PrintRoomsInLinkedList(v)
+	}
+	for i := 0; i < len(paths); i++ {
+		if paths[i].Len < 2 {
+			return fmt.Errorf("organizeIndependentPaths: paths[%d].len() < 2", i)
+		}
+		iPrev := paths[i].Front
+		iCur := paths[i].Front.Next
+		for iCur != nil && iCur.Next != nil {
+			ipRoom := iPrev.Room
+			icRoom := iCur.Room
+
+			if icRoom.Costs[ipRoom.Name] == 0 {
+				fmt.Printf("I := %v\niPrevRoom: %+v\niCurRoom: %+v\n", i, ipRoom, icRoom)
+				isSwapped := false
+				for j := 0; j < len(paths) && !isSwapped; j++ {
+					if j == i {
+						continue
+					}
+					jPrev := paths[j].Front
+					jCur := paths[j].Front.Next
+					for jCur != nil && jCur.Next != nil {
+						if iPrev.Room == jCur.Room && iCur.Room == jPrev.Room {
+							iPrev.Next, jPrev.Next = jCur.Next, iCur.Next
+
+							paths[i].RefreshData()
+							paths[j].RefreshData()
+							PrintRoomsInLinkedList(paths[i])
+							PrintRoomsInLinkedList(paths[j])
+							isSwapped = true
+							fmt.Printf("Swapped: %v\n", isSwapped)
+							break
+						}
+						jPrev = jCur
+						jCur = jCur.Next
+					}
+				}
+				fmt.Printf("Swapped: %v\n", isSwapped)
+				if !isSwapped {
+					return fmt.Errorf("organizeIndependentPaths: for paths[%d] data not sapped")
+				}
+				icRoom.Costs[ipRoom.Name] = 1
+				fmt.Printf("Break\n")
+				break
+			}
+			iPrev = iCur
+			iCur = iCur.Next
+		}
+	}
+
+	fmt.Println("organizeIndependentPaths: After")
+	for _, v := range paths {
+		PrintRoomsInLinkedList(v)
+	}
 	return nil
+}
+
+func getPathsCopyWithOrigRooms(paths []*path) []*path {
+	result := make([]*path, len(paths))
+	for i := 0; i < len(result); i++ {
+		result[i] = paths[i].GetCopyWithOrigRoom()
+	}
+	return result
 }

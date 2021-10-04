@@ -1,28 +1,36 @@
 9
 ##start
-room_0 0 0
-room_1 0 1
-room_2 1 0
-room_3 0 2
-room_4 4 4
-room_5 5 5
-room_6 6 6
-room_7 7 7
-room_8 8 8
+start 1 5
 ##end
-room_9 9 9
-room_10 10 10
-room_0-room_1
-room_0-room_2
-room_1-room_3
-room_1-room_4
-room_3-room_4
-room_2-room_5
-room_2-room_4
-room_4-room_9
-room_3-room_6
-room_6-room_8
-room_8-room_9
-room_3-room_7
-room_7-room_9
-room_9-room_10
+end 10 5
+a 2 3
+b 2 5
+c 2 7
+d 3 3
+e 3 5
+f 3 7
+g 4 3
+q 4 5
+r 4 7
+s 5 5
+
+#Links
+start-a
+start-b
+start-c
+a-b
+a-d
+c-b
+c-f
+c-s
+b-d
+b-e
+d-e
+f-e
+g-e
+q-e
+d-g
+r-q
+q-s
+g-end
+s-end

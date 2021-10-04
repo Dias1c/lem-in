@@ -18,7 +18,7 @@ type room struct {
 	AntsCount int              // Count Ants in room
 	X, Y      int              // Coordinates
 	Paths     map[string]*room // Adjacent rooms
-	Costs     map[string]byte  // Cost For Every Room in Path
+	Costs     map[string]int8  // Cost For Every Room in Path
 	PrevRoom  *room            // From Wich room did you come?
 }
 
@@ -43,7 +43,7 @@ func getRoomFromLine(line string) *room {
 		X:     coorx,
 		Y:     coory,
 		Paths: make(map[string]*room, 1),
-		Costs: make(map[string]byte, 1),
+		Costs: make(map[string]int8, 1),
 	}
 }
 

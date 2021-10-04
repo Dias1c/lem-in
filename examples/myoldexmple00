@@ -12,29 +12,21 @@ i 9 0
 j 9 4
 k 9 6
 l 7 8
-
-new1 5 0
-new2 5 4
-new3 5 9
-
 ##end
 m 12 4
 n 12 8
 a-b
 b-e
-e-new2
-new2-g
+e-g
 g-j
 j-m
 a-d
-d-new1
-new1-i
+d-i
 i-j
 b-c
 c-f
 f-g
-e-new3
-new3-h
+e-h
 h-l
 l-n
 n-m
