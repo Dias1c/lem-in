@@ -218,14 +218,15 @@ function ResetFrameValues() {
     let min = 0,
         value = tb_FrameIndex.value,
         max = Drawwer.Graph.Steps.length - 1;
+    max = max < 0 ? 0 : max;
     if (value > max || value < min) {
         value = min
         console.log("Value changed")
     }
 
-    tb_FrameIndex.min = min
-    tb_FrameIndex.value = value
-    tb_FrameIndex.max = max
+    tb_FrameIndex.min = min;
+    tb_FrameIndex.value = value;
+    tb_FrameIndex.max = max;
     l_FrameInfo.innerHTML = `${value}/${max}`
     Drawwer.ShowFrame(value)
     IsFramePlay = false

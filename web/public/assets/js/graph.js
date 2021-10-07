@@ -67,14 +67,16 @@ class Graphs {
     getNodesWithoutCountAnts(lines) {
         if (lines == null) {
             throw { message: "lines is null, (setNodes)" }
-        } else if (lines.length < 1) {
-            throw { message: "lines.length < 1, (setNodes)" }
         }
+        // Removed line size checker
         let startIdx = 0;
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i]
             startIdx = i + 1
             if (line.startsWith("#") || line == "") { // Check for comment
+                if (line.startsWith("##")) {
+                    return lines.slice(i)
+                }
                 continue
             } else {
                 let countAnts = parseInt(line);
@@ -83,6 +85,7 @@ class Graphs {
                     break
                 } else {
                     startIdx--
+                    break
                 }
             }
         }
@@ -91,9 +94,8 @@ class Graphs {
     setNodes(lines) {
         if (lines == null) {
             throw { message: "lines is null, (setNodes)" }
-        } else if (lines.length < 2) {
-            throw { message: "lines.length < 2, (setNodes)" }
         }
+        // Removed line size checker
         let startIdx = 0;
 
         // Gets All Rooms
@@ -150,9 +152,8 @@ class Graphs {
     setLinks(lines) {
         if (lines == null) {
             throw { message: "lines is null, (setLinks)" }
-        } else if (lines.length < 1) {
-            throw { message: "lines.length < 2 (No Nodes), (setLinks)" }
         }
+        // Removed line size checker
         let startIdx = 0;
         // Gets All Rooms
         for (let i = 0; i < lines.length; i++) {
@@ -186,14 +187,18 @@ class Graphs {
                 continue
             } else {
                 let step = this.addStep(line)
-                if (step == null) {
+                if (step == null || step.length == 0) {
                     startIdx--
                     break
                 }
                 steps.push(step)
             }
         }
-
+        // If Steps Not Found Remove Start Room From Step
+        if (steps.length == 0) {
+            this.Steps = []
+            return
+        }
         let paths = []
         let ants = {}
         for (let i = 0; i < steps.length; i++) {
@@ -261,7 +266,7 @@ class Graphs {
         }
         let regex = new RegExp(`L(\\d{1,})-(${Graphs.PatternNodeName})`, 'gm')
         const match = [...line.matchAll(regex)];
-        if (match == null) {
+        if (match == null || match.length == 0) {
             return null
         }
         let roomNames = []
@@ -347,6 +352,7 @@ class GraphDrawer {
     AddGraphToGroup() {
         this.addLines();
         this.addCircles();
+        this.addCirlceNames();
     }
     ShowFrame(frame) {
         if (0 <= frame && frame < this.Graph.Steps.length) {
@@ -413,6 +419,21 @@ class GraphDrawer {
         if (this.Circles[this.Graph.Finish]) {
             this.Circles[this.Graph.Finish].style("stroke", "#000")
         }
+    }
+    addCirlceNames() {
+        this.Graph.NodeNames.forEach((name) => {
+            let node = this.Graph.Nodes[name]
+            let posX = node.X * this.TileSize
+            let posY = node.Y * this.TileSize
+
+            this.html_g
+                .append("text")
+                .attr("x", posX)
+                .attr("y", posY - (this.CircleRadius + 5))
+                .attr("fill", "#000")
+                .text(`${node.Name}`)
+                .attr("text-anchor", "middle")
+        });
     }
 }
 

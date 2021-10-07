@@ -15,7 +15,7 @@ type IndexPage struct {
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("IndexHandler\t%v\t%v", r.Method, r.URL.Path)
 	if r.URL.Path != "/" {
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		RenderErrorPage(w, "", http.StatusText(http.StatusNotFound))
 		return
 	}
 	// Render

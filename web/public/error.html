@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="./assets/css/default.css">
     <!-- Icon -->
     <link rel="shortcut icon" href="./assets/icons/ant.svg" type="image/x-icon">
-    <title>ERROR</title>
+    <title>{{ .Title }}</title>
 </head>
 
 <body>
@@ -21,7 +21,7 @@
             <button class="btn btn--close" id="windowClose"></button>
         </div>
         <div class="window__content ">
-            <pre class="window__text" id="windowText">{{ .Message }}</pre>
+            <pre class="window__text" id="windowText">{{ .Title }}<br>{{ .Message }}</pre>
             <div class="window__action">
                 <a href="/" class="btn" id="windowAction">Go Main</a>
             </div>

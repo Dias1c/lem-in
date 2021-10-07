@@ -12,9 +12,6 @@ import (
 
 // TODO (GO) Paths Optimizer
 // TODO (GO) Getter Ants Pos On every step
-// TODO (JS) Check Why count steps = 2 (On send graph)
-// TODO (JS) Remove PathLen checker!
-// TODO (JS) do func addTexts after addCircles
 // TODO (HTML & README.md) Write About Project
 
 func main() {

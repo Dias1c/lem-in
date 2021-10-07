@@ -8,7 +8,7 @@ import (
 var Templates *template.Template
 
 func InitTemplates() error {
-	files, err := template.ParseFiles("web/public/index.html")
+	files, err := template.ParseFiles("web/public/index.html", "web/public/error.html")
 	if err != nil {
 		return err
 	}
