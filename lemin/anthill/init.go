@@ -126,7 +126,7 @@ func setPathsFromLines(lines *[]string, rooms map[string]*room) error {
 		} else {
 			if isCorrect := pattern.MatchString(line); isCorrect {
 				submatch := pattern.FindStringSubmatch(line)
-				//Set Paths
+				// Set Paths
 				nameFrom := submatch[1]
 				nameTo := submatch[2]
 				// fmt.Printf("%v - %v\n", nameFrom, nameTo)

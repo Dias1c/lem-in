@@ -126,7 +126,7 @@ input[type=range]{
     -webkit-appearance: none;
 }
 
-input[type=range]::-webkit-slider-runnable-track {
+input[type=range]::-webkit-slider-runnable-track, input[type=range]::-moz-range-track  {
     margin-top: 5px;
     height: 3px;
     background: #ddd;
@@ -134,12 +134,12 @@ input[type=range]::-webkit-slider-runnable-track {
     border-radius: 0;
 }
 
-input[type=range]:disabled::-webkit-slider-thumb {
+input[type=range]:disabled::-webkit-slider-thumb, input[type=range]:disabled::-moz-range-thumb {
     background-color: #BABECC;
     cursor:not-allowed;
 }
 
-input[type=range]::-webkit-slider-thumb {
+input[type=range]::-webkit-slider-thumb, input[type=range]::-moz-range-thumb {
     -webkit-appearance: none;
     border: none;
     height: 10px;

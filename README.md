@@ -46,6 +46,9 @@ go run . (filename | --http=:port | --file=filename)
 ```
 ### Example
 # How Program works
-[About algoritm](http://www.macfreek.nl/memory/Disjoint_Path_Finding)
+### Suurballe's algorithm Links:
+- [Detailed explanation](https://en.wikipedia.org/wiki/Suurballe%27s_algorithm)
+- [Briefly in pictures](http://www.macfreek.nl/memory/Disjoint_Path_Finding)
 # Authors
 - [Dias1c](https://github.com/Dias1c)
+- [nrblzn](https://github.com/RaevNur)

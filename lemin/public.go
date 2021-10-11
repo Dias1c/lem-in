@@ -2,7 +2,6 @@ package lemin
 
 import (
 	"fmt"
-
 	"lem-in/general"
 	"lem-in/lemin/anthill"
 )
@@ -37,8 +36,6 @@ func GetResultByContent(content string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// Add Start Match witch get result by lines or string
-	anthill.PrintTerrainDatas(myterrain)
 	result, err := myterrain.Match()
 	if err != nil {
 		return "Incorrect", errPaths(err)

@@ -10,8 +10,7 @@ import (
 	"lem-in/web"
 )
 
-// TODO (GO) Paths Optimizer
-// TODO (GO) Getter Ants Pos On every step
+// TODO Save Results { CalcSteps For Result + Set Results }
 // TODO (HTML & README.md) Write About Project
 
 func main() {

@@ -12,16 +12,6 @@ const (
 	PatternRoomName = `[.\dA-KM-Za-zА-Яа-я]{1}[.\d\wА-Яа-я]{0,}`
 )
 
-//
-type room struct {
-	Name      string           // RoomName
-	AntsCount int              // Count Ants in room
-	X, Y      int              // Coordinates
-	Paths     map[string]*room // Adjacent rooms
-	Costs     map[string]int8  // Cost For Every Room in Path
-	PrevRoom  *room            // From Wich room did you come?
-}
-
 // GetRoomFromLine - Returns nil if line incorrect
 func getRoomFromLine(line string) *room {
 	pattern, err := regexp.Compile(fmt.Sprintf(`^(%v) (\d{1,}) (\d{1,})$`, PatternRoomName))
@@ -39,11 +29,11 @@ func getRoomFromLine(line string) *room {
 		return nil
 	}
 	return &room{
-		Name:  name,
-		X:     coorx,
-		Y:     coory,
-		Paths: make(map[string]*room, 1),
-		Costs: make(map[string]int8, 1),
+		Name:     name,
+		X:        coorx,
+		Y:        coory,
+		PathsIn:  make(map[string]*room, 1),
+		PathsOut: make(map[string]*room, 1),
 	}
 }
 
@@ -57,10 +47,7 @@ func addPath(rooms map[string]*room, from, to string) error {
 	if !isFromExist || !isToExist {
 		return fmt.Errorf("invalid room names on paths: %q-%q", from, to)
 	}
-	rooms[from].Paths[to] = roomTo
-	rooms[to].Paths[from] = roomFrom
-
-	rooms[from].Costs[to] = 1
-	rooms[to].Costs[from] = 1
+	rooms[from].PathsOut[to] = roomTo
+	rooms[to].PathsOut[from] = roomFrom
 	return nil
 }
