@@ -37,7 +37,7 @@ func getCountAntsFromLine(lines *[]string) (int, error) {
 }
 
 // getRoomsFromLine - returns Rooms, startRoom, endRoom, error if exists.
-// Checkking room names for doubles.
+// Checkking room names and coordinates for doubles
 func getRoomsFromLines(lines *[]string) (map[string]*room, string, string, error) {
 	err := errors.New("getRoomsFromLine: Lines == nil")
 	if lines == nil {
@@ -48,24 +48,25 @@ func getRoomsFromLines(lines *[]string) (map[string]*room, string, string, error
 	startIdx := 0
 	size := len(*lines)
 	rooms, startRoom, endRoom := make(map[string]*room, 2), "", ""
+	uniqueCoords := make(map[int]map[int]bool, len(*lines)/3)
 	// Gets All Rooms
 	for i := 0; i < size; i++ {
 		line := (*lines)[i]
 		startIdx = i + 1
 		if strings.HasPrefix(line, "#") { // Check for comment or Start|End Rooms
-			isStart := false
-			if line == "##start" {
-				isStart = true
-			}
 			switch line {
 			case "##start", "##end": // check for start or end room
+				isStart := false
+				if line == "##start" {
+					isStart = true
+				}
 				i++
 				startIdx++
 				if i < size {
 					line = (*lines)[i]
 					room := getRoomFromLine(line)
 					if room == nil {
-						return nil, "", "", errors.New("invalid rooms for start or end not found")
+						return nil, "", "", fmt.Errorf("invalid rooms for start or end. Problem with: '%v'", line)
 					} else if isStart && startRoom == "" {
 						startRoom = room.Name
 					} else if !isStart && endRoom == "" {
@@ -88,17 +89,23 @@ func getRoomsFromLines(lines *[]string) (map[string]*room, string, string, error
 			startIdx = startIdx - 1
 			break
 		}
+		// Check For Valid Room
 		if _, isRoomExist := rooms[room.Name]; isRoomExist {
-			return nil, "", "", errors.New("the names of the rooms should not be repeated")
+			return nil, "", "", fmt.Errorf("the names of the rooms should not be repeated. Room: '%v'", room.Name)
 		}
+		if uniqueCoords[room.X] != nil { // Check Unique Coordinates
+			if uniqueCoords[room.X][room.Y] {
+				return nil, "", "", fmt.Errorf("room coords must be unique. Room: '%v'", room.Name)
+			}
+		} else {
+			uniqueCoords[room.X] = make(map[int]bool)
+		}
+		uniqueCoords[room.X][room.Y] = true
+
 		rooms[room.Name] = room
 	}
 	if startRoom == "" || endRoom == "" {
-		msg := "invalid rooms for start or end not found."
-		if len(*lines) > startIdx {
-			msg += fmt.Sprintf(" Maybe problem with %q", (*lines)[startIdx])
-		}
-		return nil, "", "", fmt.Errorf(msg)
+		return nil, "", "", errors.New("invalid rooms for start or end not found")
 	}
 	*lines = (*lines)[startIdx:]
 	return rooms, startRoom, endRoom, nil
@@ -134,9 +141,10 @@ func setPathsFromLines(lines *[]string, rooms map[string]*room) error {
 					return fmt.Errorf("unknown room name: %q", nameFrom)
 				} else if _, roomFound := rooms[nameTo]; !roomFound {
 					return fmt.Errorf("unknown room name: %q", nameTo)
+				} else if nameFrom == nameTo {
+					return fmt.Errorf("invalid path: %v-%v", nameFrom, nameTo)
 				}
 
-				// Реализовать добавление путей для комнат + проверка
 				addPath(rooms, nameFrom, nameTo)
 			} else {
 				return fmt.Errorf("invalid path: %q", line)

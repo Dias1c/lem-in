@@ -3,6 +3,8 @@ package anthill
 import (
 	"errors"
 	"fmt"
+	"io"
+	"sort"
 )
 
 func GetAnthillFromLines(lines []string) (*anthill, error) {
@@ -21,85 +23,26 @@ func GetAnthillFromLines(lines []string) (*anthill, error) {
 	return &anthill{AntsCount: countAnts, StepsCount: -1, Rooms: rooms, Start: startRoom, End: endRoom}, nil
 }
 
-// Validate - Checks anthill for correct. (I know just want to check all in 1 func)
 func (a *anthill) Validate() error {
-	// Check main params
-	if a == nil {
-		return fmt.Errorf("anthill can't be Null")
-	} else if a.AntsCount <= 0 {
-		return fmt.Errorf("incorrect count of ants on anthill: %q but expected >= 1", a.AntsCount)
-	} else if a.Rooms == nil {
-		return fmt.Errorf("rooms can't be Null")
+	if a.AntsCount < 1 {
+		return errors.New("invalid number of ants")
+	} else if a.Start == "" || a.End == "" {
+		return errors.New("no start, end rooms found")
 	} else if len(a.Rooms) < 2 {
-		return fmt.Errorf("in anthill should be minimum 2 rooms")
-	} else if a.Start == "" {
-		return fmt.Errorf("start room name can't be empty")
-	} else if a.End == "" {
-		return fmt.Errorf("end room name can't be empty")
-	} else if _, isExist := a.Rooms[""]; isExist {
-		return fmt.Errorf("room names can't be ''")
-	}
-	// Check Rooms For positions
-	sliceRooms := make([]*room, len(a.Rooms))
-	i := 0
-	// Set map to slice for easy check + check paths, costs for nil
-	for _, room := range a.Rooms {
-		if room == nil {
-			return fmt.Errorf("room can't be Null")
-		} else if room.Name == "" {
-			return fmt.Errorf("room name can't be empty")
-		} else if room.PathsOut == nil {
-			return fmt.Errorf("room paths can't be Null (RoomName: %v)", room.Name)
-		} else if len(room.PathsOut) == 0 {
-			return fmt.Errorf("there is no way to any room in the room (RoomName: %v)", room.Name)
-		} else if _, isExist := room.PathsOut[room.Name]; isExist {
-			return fmt.Errorf("room cannot have paths leading to itself (RoomName: %v)", room.Name)
-		}
-		sliceRooms[i] = room
-		i++
-	}
-	// Check Room paths + positions
-	for i, room := range sliceRooms {
-		for _, innerRoom := range sliceRooms[i+1:] {
-			if room.X == innerRoom.X && room.Y == innerRoom.Y {
-				return fmt.Errorf("the rooms should not be on the same coordinates (1st room: %+v, 2nd room: %+v)", *room, *innerRoom)
-			}
-			// Check Room Paths
-			if r, isExist := room.PathsOut[innerRoom.Name]; isExist {
-				if r == nil {
-					return fmt.Errorf("room can't be Null")
-				}
-				r, isExistTo := innerRoom.PathsOut[room.Name]
-				if !isExistTo {
-					return fmt.Errorf("the room you entered must have a way back")
-				} else if r == nil {
-					return fmt.Errorf("room can't be Null")
-				}
-			} else if r, isExist := innerRoom.PathsOut[room.Name]; isExist {
-				if r == nil {
-					return fmt.Errorf("room can't be Null")
-				}
-				r, isExistTo := room.PathsOut[innerRoom.Name]
-				if !isExistTo {
-					return fmt.Errorf("the room you entered must have a way back")
-				} else if r == nil {
-					return fmt.Errorf("room can't be Null")
-				}
-			}
-		}
+		return errors.New("invalid number of rooms")
 	}
 	return nil
 }
 
 // Match - To Do
-func (a *anthill) Match() (string, error) {
+func (a *anthill) Match() error {
 	for {
 		if !SearchShortPath(a) {
 			// path not found, then check for prev path count
 			if a.AntsCount > 0 {
-				return a.generateResult(), nil
+				return nil
 			} else {
-				return "", errors.New("path not found")
+				return errors.New("path not found")
 			}
 		}
 		// checking effective of new short path
@@ -107,7 +50,54 @@ func (a *anthill) Match() (string, error) {
 		// if effective then replace result to new (returns true)
 		// if not then return previous result (returns false)
 		if !CheckEffective(a) {
-			return a.generateResult(), nil
+			return nil
 		}
+	}
+}
+
+func (a *anthill) GenerateResult() {
+	sort.Slice(a.Paths, func(i, j int) bool { return a.Paths[i].Len < a.Paths[j].Len })
+	steps, antsForEachPath := calcSteps(a.AntsCount, a.Paths)
+	// fmt.Printf("MyCalc: %v, Arr: %v\n", steps, antsForEachPath)
+	a.Result = make([]string, steps)
+	if steps == 1 {
+		roomName := a.Paths[0].Front.Room.Name
+		for ant := 1; ant <= antsForEachPath[0]; ant++ {
+			a.Result[0] += fmt.Sprintf("L%d-%s ", ant, roomName)
+		}
+	} else {
+		curAnt := 1
+		for i := range a.Paths {
+			start := 0
+			for l := a.Paths[i].Front; l != nil; l = l.Next {
+				for j := 0; j < antsForEachPath[i]; j++ {
+					a.Result[start+j] += fmt.Sprintf("L%d-%s ", curAnt+j, l.Room.Name)
+				}
+				start++
+			}
+			curAnt += antsForEachPath[i]
+		}
+	}
+}
+
+// Printing result using Paths on anthill
+func (a *anthill) PrintResultByPaths() {
+	sort.Slice(a.Paths, func(i, j int) bool { return a.Paths[i].Len < a.Paths[j].Len })
+	steps, antsForEachPath := calcSteps(a.AntsCount, a.Paths)
+	if steps == 1 {
+		roomName := a.Paths[0].Front.Room.Name
+		for ant := 1; ant <= antsForEachPath[0]; ant++ {
+			fmt.Printf("L%d-%s ", ant, roomName)
+		}
+		fmt.Println()
+	} else {
+		fmt.Println("Not Finished!")
+	}
+}
+
+func (a *anthill) WriteResult(w io.Writer) {
+	a.GenerateResult()
+	for _, line := range a.Result {
+		fmt.Fprintf(w, "%v\n", line)
 	}
 }

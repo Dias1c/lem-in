@@ -10,7 +10,7 @@ import (
 )
 
 func LeminHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("LeminHandler\t%v\t%v", r.Method, r.URL.Path)
+	log.Printf("API LeminHandler\t%v\t%v", r.Method, r.URL.Path)
 	if r.URL.Path != "/api/lemin" {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
@@ -21,7 +21,6 @@ func LeminHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		// Take query
 
-		log.Printf("Body: %+v\n", r.Body)
 		r.Body = http.MaxBytesReader(w, r.Body, 1048576)
 		dec := json.NewDecoder(r.Body)
 		dec.DisallowUnknownFields()
@@ -33,20 +32,17 @@ func LeminHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
-		log.Printf("data: %+v\n", data)
 		// Start Match result
-		result, err := lemin.GetResultByContent(data.Content)
+		// result, err := lemin.GetResultByContent(data.Content, 100_000)
+		w.WriteHeader(http.StatusOK)
+		err = lemin.WriteResultByContent(data.Content, w)
+		// fmt.Printf("%+v\n###\n", w)
 		if err != nil {
 			log.Print(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "%v", err.Error())
-			// http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// time.Sleep(time.Second * 5)
-		// Set the header and send data
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%v", result)
 	default:
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	}

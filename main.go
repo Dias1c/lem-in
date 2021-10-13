@@ -10,7 +10,10 @@ import (
 	"lem-in/web"
 )
 
-// TODO Save Results { CalcSteps For Result + Set Results }
+// Changed HTML & CSS For Moz+Chrome, Writing result Methods + Fetching timeout on client Side
+
+// TODO Save Results { On 1000000 ants result not send on web }
+// TODO Optimize Write Paths! Hint: use io.Writer!
 // TODO (HTML & README.md) Write About Project
 
 func main() {

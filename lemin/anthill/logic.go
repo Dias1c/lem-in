@@ -1,10 +1,5 @@
 package anthill
 
-import (
-	"fmt"
-	"sort"
-)
-
 // search shortest path from start to end with BFS algorithm
 // found path state will be saved on UsingOnPath, Parent (needed to check from End Room)
 // returns true if found, otherwise false
@@ -71,24 +66,15 @@ func CheckEffective(terrain *anthill) bool {
 		// newPaths[i].PushFront(startRoom)
 		i++
 	}
-	printPaths(newPaths)
+	// printPaths(newPaths)
 	curStepsCount := fastCalcSteps(terrain.AntsCount, newPaths)
-	fmt.Printf("%d ants, %d paths, %d steps\n", terrain.AntsCount, len(newPaths), curStepsCount)
-	// I Add Start
-	sort.Slice(newPaths, func(i, j int) bool { return newPaths[i].Len < newPaths[j].Len })
-	tSteps, StepsArr := calcSteps(terrain.AntsCount, newPaths)
-	fmt.Printf("MyCalc: %v, Arr: %v\n", tSteps, StepsArr)
-	// I Add End
+	// fmt.Printf("%d ants, %d paths, %d steps\n", terrain.AntsCount, len(newPaths), curStepsCount)
 	if terrain.StepsCount == -1 || terrain.StepsCount > curStepsCount {
 		terrain.StepsCount = curStepsCount
 		terrain.Paths = newPaths
-		return true
+		return curStepsCount != 1
 	}
 	return false
-}
-
-func (terrain *anthill) generateResult() string {
-	return ""
 }
 
 func fastCalcSteps(ants int, paths []*list) int {
@@ -108,21 +94,13 @@ func fastCalcSteps(ants int, paths []*list) int {
 	return steps
 }
 
-// calcSteps TODO
-// PathsLens: [2, 5, 5, 6] | ants: 12
+// calcSteps LOGIC
+// Example: PathsLens: [2, 5, 5, 6] | ants: 12
 // -=-=-= Start =-=-=-
-// i = 0: [ -1,  2,  2,  3] | 12 -1 = 11				| steps: 0+2 = 2
-
-// i = 1: [ -4, -1, -1,  0] | 11 -3 -2 = 6				| steps: 2+3 = 5
-// i = 2: [ -5, -2, -2, -1] | 6 -1 -1 -1 -1 = 2			| steps: 5+1 = 6
-// OR
-// i = 0: [  0,  3,  3,  4] | 12 - 0 = 12				| steps: 0+2 = 2
-// i = 1: [ -3,  0,  0,  1] | 12 - 3 = 9				| steps: 2+3 = 5
-// i = 2: [ -4, -1, -1,  0] | 9 - 3 = 6					| steps: 5+1 = 6
-
-// -1   : [ -5, -2, -2, -1] | 6 - 4 = 2					| steps: 5+1 = 6
-//   DEL: [ -5, -2, -2, -1] | 2/slice.len = 0.5 = 2		| steps: 6+0 = 6
-//   MOD: [ -6, -3, -2, -1] | 2%4 = 2, 2-2 = 0			| steps: 6+1 = 7
+// Steps = 6 = slice[slice.len-1] | (lastElem + 1) - eachElem -> [5, 2, 2, 1]
+// ants = ants - sumElems
+//   DEL: [5, 2, 2, 1] | ants/slice.Len = 2/slice.len = 0.5 | ants = 2		| steps: 6+0 = 6
+//   MOD: [6, 3, 2, 1] | ants%slice.Len = 2%4 = 2, 2-2 = 0	| ants = 0		| steps: 6+1 = 7
 // On Sending Ants
 // [ 1, 1, 1, 1 ] len = 0 | 12    | on st 7 = 0 | will not
 // [ x, 1, 1, 1 ] len = 1 | 11    | on st 6
@@ -133,8 +111,40 @@ func fastCalcSteps(ants int, paths []*list) int {
 // [ x, x, -, - ] len = 2 | 0     | on st 1
 
 // Inputs Sorted Paths, and AntsCount should be > 0
-func calcSteps(antsCount int, paths []*list) (int, []int) {
-	return 0, []int{}
+// Function designed for the optimal number of paths for ants count
+func calcSteps(antsCount int, sortedPaths []*list) (int, []int) {
+	if len(sortedPaths) < 1 {
+		return -1, []int{}
+	}
+	if sortedPaths[0].Len == 1 {
+		return 1, []int{antsCount}
+	}
+	// Create Result
+	lenPaths := len(sortedPaths)
+	result := make([]int, lenPaths)
+	steps, lastElem := sortedPaths[lenPaths-1].Len, sortedPaths[lenPaths-1].Len+1
+	for i := 0; i < lenPaths; i++ {
+		result[i] = lastElem - sortedPaths[i].Len
+		antsCount -= result[i]
+	}
+	if antsCount > 0 {
+		if antsCount >= lenPaths {
+			del := antsCount / lenPaths
+			antsCount %= lenPaths
+			steps += del
+			for i := 0; i < lenPaths; i++ {
+				result[i] += del
+			}
+		}
+		if antsCount > 0 {
+			steps++
+			for i := 0; i < antsCount; i++ {
+				result[i]++
+			}
+			antsCount = 0
+		}
+	}
+	return steps, result
 }
 
 func addNext(current, endRoom *room, usedRooms map[*room]bool, usableRoomsList *list, mark bool) bool {

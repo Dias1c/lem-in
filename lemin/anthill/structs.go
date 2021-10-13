@@ -6,7 +6,7 @@ type anthill struct {
 	Start, End string
 	Rooms      map[string]*room
 	Paths      []*list
-	Result     string
+	Result     []string
 }
 
 type room struct {

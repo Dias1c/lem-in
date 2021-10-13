@@ -31,13 +31,18 @@ function OnLoad() {
 
 async function btn_SendContent_OnClick() {
     btn_SendContent.disabled = true
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 60000)
     try {
+
         let data = { "Content": tb_Content.value }
         const response = await fetch("/api/lemin", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
+            signal: controller.signal,
             body: JSON.stringify(data)
         });
         await response
@@ -57,6 +62,7 @@ async function btn_SendContent_OnClick() {
         let enableBtn = () => { btn_SendContent.disabled = false }
         ShowPopupWindow("Error", error.message, enableBtn, enableBtn)
     }
+    clearTimeout(timeoutId)
 }
 function btn_SetParams_OnClick() {
     try {
