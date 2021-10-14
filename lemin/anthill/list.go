@@ -39,3 +39,20 @@ func (l *list) RemoveFront() {
 		l.Back = nil
 	}
 }
+
+// returns array of rooms
+func (l *list) ToArray(lenArr int) []*room {
+	if l.Front == nil || lenArr < 1 {
+		return nil
+	}
+	res := make([]*room, lenArr)
+	cur := l.Front
+	for i := range res {
+		res[i] = cur.Room
+		cur = cur.Next
+		if cur == nil {
+			break
+		}
+	}
+	return res
+}

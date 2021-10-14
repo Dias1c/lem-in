@@ -33,14 +33,10 @@ func LeminHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// Start Match result
-		// result, err := lemin.GetResultByContent(data.Content, 100_000)
-		w.WriteHeader(http.StatusOK)
-		err = lemin.WriteResultByContent(data.Content, w)
-		// fmt.Printf("%+v\n###\n", w)
-		if err != nil {
-			log.Print(err.Error())
+		if lErr := lemin.WriteResultByContent(w, data.Content); lErr != nil {
+			log.Print(lErr.Error())
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "%v", err.Error())
+			fmt.Fprintf(w, "%v", lErr.Error())
 			return
 		}
 	default:

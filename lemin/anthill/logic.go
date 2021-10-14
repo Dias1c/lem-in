@@ -1,9 +1,9 @@
 package anthill
 
-// search shortest path from start to end with BFS algorithm
+// SearchShortPath - search shortest path from start to end with BFS algorithm
 // found path state will be saved on UsingOnPath, Parent (needed to check from End Room)
 // returns true if found, otherwise false
-func SearchShortPath(terrain *anthill) bool {
+func searchShortPath(terrain *anthill) bool {
 	usableRoomsList := &list{}
 	startRoom := terrain.Rooms[terrain.Start]
 	endRoom := terrain.Rooms[terrain.End]
@@ -46,7 +46,7 @@ func SearchShortPath(terrain *anthill) bool {
 	return isFind
 }
 
-func CheckEffective(terrain *anthill) bool {
+func checkEffective(terrain *anthill) bool {
 	startRoom, endRoom := terrain.Rooms[terrain.Start], terrain.Rooms[terrain.End]
 	i, lenNewPaths := 0, len(startRoom.PathsIn)
 	newPaths := make([]*list, lenNewPaths)
@@ -69,9 +69,9 @@ func CheckEffective(terrain *anthill) bool {
 	// printPaths(newPaths)
 	curStepsCount := fastCalcSteps(terrain.AntsCount, newPaths)
 	// fmt.Printf("%d ants, %d paths, %d steps\n", terrain.AntsCount, len(newPaths), curStepsCount)
-	if terrain.StepsCount == -1 || terrain.StepsCount > curStepsCount {
+	if terrain.StepsCount == 0 || terrain.StepsCount > curStepsCount {
 		terrain.StepsCount = curStepsCount
-		terrain.Paths = newPaths
+		terrain.Result.Paths = newPaths
 		return curStepsCount != 1
 	}
 	return false
@@ -114,7 +114,7 @@ func fastCalcSteps(ants int, paths []*list) int {
 // Function designed for the optimal number of paths for ants count
 func calcSteps(antsCount int, sortedPaths []*list) (int, []int) {
 	if len(sortedPaths) < 1 {
-		return -1, []int{}
+		return 0, []int{}
 	}
 	if sortedPaths[0].Len == 1 {
 		return 1, []int{antsCount}
