@@ -17,7 +17,22 @@ func LeminHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	switch r.Method {
 	case http.MethodGet:
-		fmt.Fprintf(w, "GET")
+		fmt.Fprintf(w,
+			`This path accepts only the POST method. 
+The data that this page accepts must be in json format.
+
+JSON = "
+{
+	Content: "Data"
+}
+"
+
+Data = "
+AntsCount (Integer > 0)
+Rooms (roomName coorX coorY) + Start and End rooms
+Relations (roomName-roomName)
+"
+`)
 	case http.MethodPost:
 		// Take query
 
@@ -28,13 +43,11 @@ func LeminHandler(w http.ResponseWriter, r *http.Request) {
 		var data = struct{ Content string }{}
 		err := dec.Decode(&data)
 		if err != nil {
-			log.Print(err.Error())
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
 		// Start Match result
 		if lErr := lemin.WriteResultByContent(w, data.Content); lErr != nil {
-			log.Print(lErr.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "%v", lErr.Error())
 			return

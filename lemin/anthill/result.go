@@ -6,6 +6,7 @@ import (
 	"sort"
 )
 
+// pathsOfListToSlice - convertiong list of rooms to slice of rooms
 func pathsOfListToSlice(paths []*list) [][]*room {
 	result := make([][]*room, len(paths))
 	for i, path := range paths {
@@ -13,17 +14,28 @@ func pathsOfListToSlice(paths []*list) [][]*room {
 		j := 0
 		for node := path.Front; node != nil; node = node.Next {
 			result[i][j] = node.Room
+			j++
 		}
-		j++
 	}
 	return result
 }
+
+// For Clear Data
+// func (r *Result) ClearData() {
+// 	for i := range r.Paths {
+// 		for r.Paths[i].Front != nil {
+// 			r.Paths[i].Front.Room = nil
+// 			r.Paths[i].Front, r.Paths[i].Front.Next = r.Paths[i].Front.Next, nil
+// 		}
+// 		r.Paths[i].Back = nil
+// 	}
+// 	r.Paths = nil
+// }
 
 // WriteResult - write result with writer
 func (r *Result) WriteResult(w io.Writer) {
 	sort.Slice(r.Paths, func(i, j int) bool { return r.Paths[i].Len < r.Paths[j].Len })
 	steps, antsForEachPath := calcSteps(r.AntsCount, r.Paths)
-	// fmt.Println(steps, antsForEachPath)
 	if steps == 1 {
 		roomName := r.Paths[0].Front.Room.Name
 		for ant := 1; ant <= antsForEachPath[0]; ant++ {
@@ -57,7 +69,7 @@ func (r *Result) WriteResult(w io.Writer) {
 			t := a
 			a = b
 			b = t
-			w.Write([]byte{'\n'})
+			fmt.Fprintln(w)
 		}
 	}
 }

@@ -14,13 +14,41 @@ func CreateAnthill() *anthill {
 	return result
 }
 
-// Set nil data for anthill
-func (a *anthill) ClearData() {
-	a.Rooms = nil
-	a.FieldInfo = nil
+// ValidateByFieldInfo - returns an error if something was missed by the scanner
+func (a *anthill) ValidateByFieldInfo() error {
+	if a.FieldInfo.MODE != FIELD_PATHS {
+		switch a.FieldInfo.MODE {
+		case FIELD_ANTS:
+			return errors.New("here is no Ants")
+		case FIELD_ROOMS:
+			return errors.New("here is no Rooms or Paths")
+		default:
+			return errors.New("func Validate returns error")
+		}
+	} else {
+		if !a.FieldInfo.Start {
+			return errors.New("please set ##start room")
+		} else if !a.FieldInfo.End {
+			return errors.New("please set ##end room")
+		}
+	}
+	return nil
 }
 
-//
+// // Set nil data for anthill
+// func (a *anthill) ClearData() {
+// 	for _, room := range a.Rooms {
+// 		room.ParentIn = nil
+// 		room.ParentOut = nil
+// 		room.PathsIn = nil
+// 		room.PathsOut = nil
+// 	}
+// 	a.Rooms = nil
+// 	a.Result = nil
+// 	a.FieldInfo = nil
+// }
+
+// ReadDataFromLine - reading the line, it replenishes the data about the anthill. (FieldInfo understands what the string is)
 func (a *anthill) ReadDataFromLine(line string) error {
 	if line == "" || strings.HasPrefix(line, "#") && !strings.HasPrefix(line, "##") {
 		return nil
@@ -58,6 +86,7 @@ func (a *anthill) ReadDataFromLine(line string) error {
 		} else if len(strings.Split(line, " ")) != 3 {
 			a.FieldInfo.MODE = FIELD_PATHS
 			a.FieldInfo.UsingCoordinates = nil
+			return a.ReadDataFromLine(line)
 		} else {
 			_, err := a.SetRoomFromLine(line)
 			return err
@@ -72,7 +101,7 @@ func (a *anthill) ReadDataFromLine(line string) error {
 	return nil
 }
 
-// Match -
+// Match - Finds paths, returns an error if it does not find a single path. Paths are saved in anthill.Result
 func (a *anthill) Match() error {
 	for {
 		if !searchShortPath(a) {
@@ -83,10 +112,6 @@ func (a *anthill) Match() error {
 				return errors.New("path not found")
 			}
 		}
-		// checking effective of new short path
-		// current steps count < previous steps count
-		// if effective then replace result to new (returns true)
-		// if not then return previous result (returns false)
 		if !checkEffective(a) {
 			return nil
 		}

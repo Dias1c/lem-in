@@ -1,6 +1,6 @@
 package anthill
 
-// SearchShortPath - search shortest path from start to end with BFS algorithm
+// SearchShortPath - search shortest path from start to end with BFS algorithm (Modified Surrballe`s algorithm).
 // found path state will be saved on UsingOnPath, Parent (needed to check from End Room)
 // returns true if found, otherwise false
 func searchShortPath(terrain *anthill) bool {
@@ -46,6 +46,10 @@ func searchShortPath(terrain *anthill) bool {
 	return isFind
 }
 
+// checking effective of new short path
+// current steps count < previous steps count
+// if effective then replace result to new (returns true)
+// if not then return previous result (returns false)
 func checkEffective(terrain *anthill) bool {
 	startRoom, endRoom := terrain.Rooms[terrain.Start], terrain.Rooms[terrain.End]
 	i, lenNewPaths := 0, len(startRoom.PathsIn)
@@ -77,6 +81,7 @@ func checkEffective(terrain *anthill) bool {
 	return false
 }
 
+// fastCalcSteps - calculate steps for paths and ants count
 func fastCalcSteps(ants int, paths []*list) int {
 	steps, lossPerStep := 0, 0
 	comingAnts := make(map[int]int)
@@ -147,6 +152,7 @@ func calcSteps(antsCount int, sortedPaths []*list) (int, []int) {
 	return steps, result
 }
 
+// addNext - add usableRoomsList next rooms. Returns true if find End room (Using On BFS, Modified Surrballe`s algorithm)
 func addNext(current, endRoom *room, usedRooms map[*room]bool, usableRoomsList *list, mark bool) bool {
 	paths := current.PathsOut
 	if mark {
@@ -186,6 +192,7 @@ func addNext(current, endRoom *room, usedRooms map[*room]bool, usableRoomsList *
 	return false
 }
 
+// replaceEdges - replace edges for finded paths. (Surrballe`s algorithm)
 func replaceEdges(startRoom, endRoom *room) {
 	var next *room
 	cur, prev := endRoom.ParentIn, endRoom
@@ -216,6 +223,7 @@ func replaceEdges(startRoom, endRoom *room) {
 	cur.PathsIn[prev.Name] = prev
 }
 
+// clearMarkedInfromation - clean the markers so as not to interfere with subsequent new paths
 func clearMarkedInfromation(usedRooms map[*room]bool) {
 	for key := range usedRooms {
 		if len(key.PathsIn) < 1 {

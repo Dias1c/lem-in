@@ -10,9 +10,14 @@ import (
 	"lem-in/web"
 )
 
-// Changed Init algorihm + writing result
+// Changes
+// Completed Writing Result
+// Fixed reading data for line
+// Added Error handle for empty files and missing data on file/content
+// Added comments for every func, struct
+// The size of the footer is made of rubber (It was not beautiful on large screens)
 
-// TODO Write Result For much steps
+// TODO Prevent memory leak for the web part
 // TODO (HTML & README.md) Write About Project
 
 func main() {

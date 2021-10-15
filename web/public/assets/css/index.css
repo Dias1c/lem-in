@@ -221,7 +221,6 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 }
 /* FOOTER */
 .footer{
-    height: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;

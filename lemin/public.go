@@ -14,6 +14,9 @@ func RunProgramWithFile(path string) {
 	file, err := os.Open(path)
 	if err != nil {
 		general.CloseProgram(err)
+	} else if fInfo, _ := file.Stat(); fInfo.IsDir() {
+		err = fmt.Errorf("%v is directory", fInfo.Name())
+		general.CloseProgram(err)
 	}
 	scanner := bufio.NewScanner(file)
 	result, err := getResult(scanner)
