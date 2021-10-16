@@ -1,6 +1,6 @@
 package anthill
 
-// SearchShortPath - search shortest path from start to end with BFS algorithm (Modified Surrballe`s algorithm).
+// SearchShortPath - search shortest path from start to end with BFS algorithm (Modified Suurballe`s algorithm).
 // found path state will be saved on UsingOnPath, Parent (needed to check from End Room)
 // returns true if found, otherwise false
 func searchShortPath(terrain *anthill) bool {
@@ -152,7 +152,7 @@ func calcSteps(antsCount int, sortedPaths []*list) (int, []int) {
 	return steps, result
 }
 
-// addNext - add usableRoomsList next rooms. Returns true if find End room (Using On BFS, Modified Surrballe`s algorithm)
+// addNext - add usableRoomsList next rooms. Returns true if find End room (Using On BFS, Modified Suurballe`s algorithm)
 func addNext(current, endRoom *room, usedRooms map[*room]bool, usableRoomsList *list, mark bool) bool {
 	paths := current.PathsOut
 	if mark {
@@ -192,7 +192,7 @@ func addNext(current, endRoom *room, usedRooms map[*room]bool, usableRoomsList *
 	return false
 }
 
-// replaceEdges - replace edges for finded paths. (Surrballe`s algorithm)
+// replaceEdges - replace edges for finded paths. (Suurballe`s algorithm)
 func replaceEdges(startRoom, endRoom *room) {
 	var next *room
 	cur, prev := endRoom.ParentIn, endRoom

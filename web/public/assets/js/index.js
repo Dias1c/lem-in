@@ -165,22 +165,22 @@ function ShowPopupWindow(title, message, onClickOk, onClickClose) {
 
 function SetDefaultValuesOnHtml() {
     tb_Result.value = `20
-a 0 0
+a 1 1
 ##start
-b 0 4
+b 1 3
 c 2 2
-d 4 0
-e 3 4
-f 6 2
-g 6 4
-h 5 7
-i 9 0
-j 9 4
-k 9 6
-l 7 8
+d 3 1
+e 2 3
+f 4 2
+g 4 3
+h 3 4
+i 5 1
+j 5 3
+k 5 4
+l 4 5
 ##end
-m 12 4
-n 12 8
+m 6 3
+n 6 5
 a-b
 b-e
 e-g
@@ -209,7 +209,7 @@ L7-m L8-m L9-m L10-j L11-n L12-k L13-i L14-l L15-g L16-d L17-h L18-f L19-a L20-e
 L10-m L11-m L12-m L13-j L14-n L15-k L16-i L17-l L18-g L19-d L20-h 
 L13-m L14-m L15-m L16-j L17-n L18-k L19-i L20-l 
 L16-m L17-m L18-m L19-j L20-n 
-L19-m L20-m 
+L19-m L20-m     
 `
     btn_SetParams_OnClick()
     ResetFrameValues()
