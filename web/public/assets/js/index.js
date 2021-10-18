@@ -164,7 +164,7 @@ function ShowPopupWindow(title, message, onClickOk, onClickClose) {
 }
 
 function SetDefaultValuesOnHtml() {
-    tb_Result.value = `20
+    tb_Result.value = `10
 a 1 1
 ##start
 b 1 3
@@ -199,17 +199,14 @@ n-m
 g-k
 k-m
 
-L1-a L2-e L3-c 
-L1-d L2-h L3-f L4-a L5-e L6-c 
-L1-i L2-l L3-g L4-d L5-h L6-f L7-a L8-e L9-c 
-L1-j L2-n L3-k L4-i L5-l L6-g L7-d L8-h L9-f L10-a L11-e L12-c 
-L1-m L2-m L3-m L4-j L5-n L6-k L7-i L8-l L9-g L10-d L11-h L12-f L13-a L14-e L15-c 
-L4-m L5-m L6-m L7-j L8-n L9-k L10-i L11-l L12-g L13-d L14-h L15-f L16-a L17-e L18-c 
-L7-m L8-m L9-m L10-j L11-n L12-k L13-i L14-l L15-g L16-d L17-h L18-f L19-a L20-e 
-L10-m L11-m L12-m L13-j L14-n L15-k L16-i L17-l L18-g L19-d L20-h 
-L13-m L14-m L15-m L16-j L17-n L18-k L19-i L20-l 
-L16-m L17-m L18-m L19-j L20-n 
-L19-m L20-m     
+L1-a L2-c L3-e 
+L1-d L2-f L3-h L4-a L5-c L6-e 
+L1-i L2-g L3-l L4-d L5-f L6-h L7-a L8-c L9-e 
+L1-j L2-k L3-n L4-i L5-g L6-l L7-d L8-f L9-h L10-a 
+L1-m L2-m L3-m L4-j L5-k L6-n L7-i L8-g L9-l L10-d 
+L4-m L5-m L6-m L7-j L8-k L9-n L10-i 
+L7-m L8-m L9-m L10-j 
+L10-m
 `
     btn_SetParams_OnClick()
     ResetFrameValues()

@@ -1,7 +1,8 @@
 # lem-in
-The task of the project is [here](https://github.com/01-edu/public/tree/master/subjects/lem-in)
+The task of the project is [here](https://github.com/01-edu/public/tree/master/subjects/lem-in)<br>
+Wiki [here](https://github.com/Dias1c/lem-in/wiki)
 # Chapters
-- [Briefly about the project](Briefly-about-the-project)
+- [Briefly about the project](#Briefly-about-the-project)
 - [Graphs in file](#Graphs-in-file)
 - [How use program](#How-use-program)
 - [How Program works](#How-Program-works)
@@ -36,12 +37,12 @@ r3 4 1
 ##end
 end 5 2
 
-start-r1
-start-r2
-r1-r3
-r2-end
-r3-end
-
+start-r1(https://github.com/Dias1c/lem-in/wiki)
+start-r2(https://github.com/Dias1c/lem-in/wiki)
+r1-r3(https://github.com/Dias1c/lem-in/wiki)
+r2-end(https://github.com/Dias1c/lem-in/wiki)
+r3-end(https://github.com/Dias1c/lem-in/wiki)
+(https://github.com/Dias1c/lem-in/wiki)
 L1-r2 L2-r1 
 L1-end L2-r3 L3-r2 
 L2-end L3-end 

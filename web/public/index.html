@@ -40,12 +40,12 @@
 10              <- Count ants
 ##start         <- It means next line is start room
 StartRoom 1 1   <- Start Room
-##end           <- It means next line is start room
+##end           <- It means next line is end room
 EndRoom 2 2     <- Target Room
-hole 4 6        <- Any room
+hole 4 6        <- Any room (name coorX coorY)
 bath 4 2        <- Any room
 #Paths          <- Comment
-StartRoom-hole  <- Room Relations
+StartRoom-hole  <- Room Relations (name1-name2)
 hole-bath       <- Room Relations
 bath-EndRoom    <- Room Relations
 "></textarea>
@@ -94,12 +94,30 @@ bath-EndRoom    <- Room Relations
                     <textarea class="input_text" id="tb_Result" placeholder="Nothing To Draw"></textarea>
                 </div>
                 <div class="block" id="b_what-the-project">
-                    <div class="card_title">What the project</div>
-                    <p>TODO Write After write ReadMe</p>
+                    <div class="card_subtitle">What the project</div>
+                    <p>
+                        This is the visual part of the work of the program "program", where the essence of the task is for ants from point A to point B to find paths that will make up the minimum number of steps.<br>
+                        Read more about the project <a href="https://github.com/Dias1c/lem-in/wiki" class="link">here<a>
+                    </p>
                 </div>
                 <div class="block" id="b_how-to-use">
-                    <div class="card_title">How To Use?</div>
-                    <p>TODO Write After write ReadMe</p>
+                    <div class="card_subtitle">How To Use?</div>
+                    <p>
+                        The sending form accepts data about the anthill.<br><br>
+                        
+                        The data about the anthill consists of 3 blocks.<br>
+                           * Block 1 is the number of ants<br>
+                           * Block 2 is information about rooms<br>
+                           * Block 3 is the relationship between rooms<br><br>
+
+                        Rules for [block 1] the number of Ants must be greater than zero<br>
+                        Rules for [block 2] the room must consist of a name, X coordinates and Y coordinates separated by a space (Name X Y). Each room in 1 line<br>
+                        Rules for [block 3] the rooms are connected to each other by a hyphen. Each relation is in 1 line<br>
+                        and all this in strictly in sequence [block 1, block 2, block 3] (These rules apply to [Text Result] too)<br><br>
+
+                        After filling in, click on Send and you will get the result in Graphic and text form. The graphic result depends on the Text result. The text result is converted to graphic via the Set Params button. In the graphical result, each path will have its own color, unused paths will be gray.
+                        To apply any changes in the text result or in the parameters then press Set Params.
+                    </p>
                 </div>
             </div>
         </div>

@@ -1,5 +1,3 @@
-// import { d3 } from "https://d3js.org/d3.v7.min.js";
-// import * as d3 from "d3";
 class Graphs {
     static PatternNodeName = `[.\\dA-KM-Za-zА-Яа-я]{1}[.\\d\\wА-Яа-я]{0,}`
     static Palette = { Default: "#1995AD", Start: "#F52549", Finish: "#6af030", Unusing: "#BCBABE", Using: "#1E434C", }
@@ -45,11 +43,31 @@ class Graphs {
                 Default: Graphs.Palette.Unusing, Active: Graphs.Palette.Unusing
             }
         });
+        let colors = [
+            [229, 43, 80],
+            [255, 191, 0],
+            [0, 127, 255],
+            [153, 102, 204],
+            [55, 155, 0],
+            [0, 49,	83],
+            [0, 168, 107],
+            [48, 41, 88],
+            [245, 120, 0],
+            [24, 167, 181],
+        ]
+        let t = 0
         //Set Colors for Actice
-        this.Paths.forEach((path) => {
-            let r = getRandom(255),
-                g = getRandom(255),
+        this.Paths.forEach((path, index) => {
+            let r = 0, g = 0, b = 0;
+            if(index < colors.length) {
+                r = colors[index][0]
+                g = colors[index][1]
+                b = colors[index][2]
+            } else {
+                r = getRandom(255);
+                g = getRandom(255);
                 b = getRandom(255);
+            }
             let colorDefault = getRgba(r, g, b, 0.5),
                 colorActive = getRgba(r, g, b, 1);
             path.forEach((name) => {
@@ -227,7 +245,7 @@ class Graphs {
         if (this.Nodes == null) {
             this.Nodes = {}
         }
-        let regex = new RegExp(`^(${Graphs.PatternNodeName}) (\\d{1,}) (\\d{1,})$`, 'gm')
+        let regex = new RegExp(`^(${Graphs.PatternNodeName}) (-?\\d{1,}) (-?\\d{1,})$`, 'gm')
         let match, node = {};
         if (match = regex.exec(line)) {
             node.Name = match[1],
@@ -287,6 +305,7 @@ class GraphDrawer {
     CircleRadius = 10
     LineWidth = 4
     Transition = 500
+    TransitionOnShow = 100
     GraphCircles = {}
 
     // Graph
@@ -351,6 +370,7 @@ class GraphDrawer {
     }
     AddGraphToGroup() {
         this.addLines();
+        this.addMovingLines();
         this.addCircles();
         this.addCirlceNames();
     }
@@ -387,10 +407,36 @@ class GraphDrawer {
                 .append("line")
                 .style("stroke-linecap", "round")
                 .style("stroke-width", this.LineWidth)
+                .style("stroke", "#dfdfdf")
                 .attr("x1", from.X * this.TileSize).attr("y1", from.Y * this.TileSize)
                 .attr("x2", to.X * this.TileSize).attr("y2", to.Y * this.TileSize);
         })
+    }
+    addMovingLines() {
+        this.Graph.Paths.forEach((path)=>{
+            let prev = this.Graph.Nodes[this.Graph.Start]
+            let lineWidth = this.LineWidth/2
 
+            let frame = 1
+            path.forEach((name) => {
+                let node = this.Graph.Nodes[name]
+                let stroke = this.html_g
+                    .append("line")
+                    .attr("x1", prev.X * this.TileSize).attr("y1", prev.Y * this.TileSize)
+                    .attr("x2", node.X * this.TileSize).attr("y2", node.Y * this.TileSize)
+                    .style("stroke-linecap", "round")
+                    .style("stroke-width", lineWidth)
+                    .style("stroke", "#dfdfdf")
+                    .transition()
+                    .duration(this.TransitionOnShow*frame)
+                    .style("stroke", node.Color.Default);
+                if (node.Name == this.Graph.Finish) {
+                    stroke.style("stroke", prev.Color.Default);
+                }
+                prev = node
+                frame++
+            });
+        });
     }
     addCircles() {
         // let node = "nodeName"
@@ -405,13 +451,6 @@ class GraphDrawer {
                 .attr("cy", posY)
                 .attr("r", this.CircleRadius)
                 .style("fill", node.Color.Default)
-            this.html_g
-                .append("text")
-                .attr("x", posX)
-                .attr("y", posY - (this.CircleRadius + 5))
-                .attr("fill", "#000")
-                .text(`${node.Name}`)
-                .attr("text-anchor", "middle")
         });
         if (this.Circles[this.Graph.Start]) {
             this.Circles[this.Graph.Start].style("stroke", "#000")
@@ -421,6 +460,7 @@ class GraphDrawer {
         }
     }
     addCirlceNames() {
+        let fontSize = this.CircleRadius*1.5
         this.Graph.NodeNames.forEach((name) => {
             let node = this.Graph.Nodes[name]
             let posX = node.X * this.TileSize
@@ -431,6 +471,7 @@ class GraphDrawer {
                 .attr("x", posX)
                 .attr("y", posY - (this.CircleRadius + 5))
                 .attr("fill", "#000")
+                .style("font-size", `${fontSize}px`)
                 .text(`${node.Name}`)
                 .attr("text-anchor", "middle")
         });
