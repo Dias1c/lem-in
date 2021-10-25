@@ -1,36 +1,28 @@
-9
+5
 ##start
-start 1 5
+start 0 1
+1 1 1
+2 2 1
+3 3 1
 ##end
-end 10 5
-a 2 3
-b 2 5
-c 2 7
-d 3 3
-e 3 5
-f 3 7
-g 4 3
-q 4 5
-r 4 7
-s 5 5
-
-#Links
-start-a
-start-b
-start-c
-a-b
-a-d
-c-b
-c-f
-c-s
-b-d
-b-e
-d-e
-f-e
-g-e
-q-e
-d-g
-r-q
-q-s
-g-end
-s-end
+end 4 1
+5 1 0
+6 2 0
+7 3 0
+8 1 2
+9 2 2
+10 3 2
+start-1
+1-2
+2-3
+3-end
+5-1
+5-6
+6-7
+7-end
+start-8
+8-9
+9-10
+10-3
+2-5
+2-10

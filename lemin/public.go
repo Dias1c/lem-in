@@ -19,6 +19,7 @@ func RunProgramWithFile(path string) {
 		general.CloseProgram(err)
 	}
 	scanner := bufio.NewScanner(file)
+	// _, err = getResult(scanner)
 	result, err := getResult(scanner)
 	if err != nil {
 		file.Close()

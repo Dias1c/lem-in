@@ -1,49 +1,86 @@
 package anthill
 
-// SearchShortPath - search shortest path from start to end with BFS algorithm (Modified Suurballe`s algorithm).
+// SearchShortPath - search shortest path from start to end with Bellman-Ford algorithm (Suurballe`s algorithm).
 // found path state will be saved on UsingOnPath, Parent (needed to check from End Room)
 // returns true if found, otherwise false
 func searchShortPath(terrain *anthill) bool {
-	usableRoomsList := &list{}
+	usableRoomsQueue := &sortedQueue{}
+	visitedRooms := make(map[*room]bool)
 	startRoom := terrain.Rooms[terrain.Start]
 	endRoom := terrain.Rooms[terrain.End]
-	startRoom.MarkedIn, startRoom.MarkedOut = true, true
-	isFind := false
-	usedRooms := make(map[*room]bool)
-	usedRooms[startRoom] = true
-	usableRoomsList.PushBack(startRoom)
-	for usableRoomsList.Front != nil {
-		current := usableRoomsList.Front.Room
-		// mark in and out depends on used on path or not
-		if !current.UsingOnPath {
-			if addNext(current, endRoom, usedRooms, usableRoomsList, false) {
-				isFind = true
-				break
+	visitedRooms[startRoom] = true
+	usableRoomsQueue.Enqueue(startRoom)
+	for usableRoomsQueue.Front != nil && !visitedRooms[endRoom] {
+		current := usableRoomsQueue.Dequeue().Room
+		for next, value := range current.Paths {
+			if value == BLOCKED || (current.Separated && !current.Marked && value == STABLE) {
+				continue
 			}
-		} else {
-			if current.MarkedOut {
-				if addNext(current, endRoom, usedRooms, usableRoomsList, false) {
-					isFind = true
-					break
-				}
-				if current.MarkedIn && addNext(current, endRoom, usedRooms, usableRoomsList, true) {
-					isFind = true
-					break
-				}
-			} else {
-				if addNext(current, endRoom, usedRooms, usableRoomsList, true) {
-					isFind = true
-					break
-				}
-			}
+			addNext(current, next, value, visitedRooms, usableRoomsQueue)
 		}
-		usableRoomsList.RemoveFront()
 	}
+	isFind := visitedRooms[endRoom]
 	if isFind {
 		replaceEdges(startRoom, endRoom)
 	}
-	clearMarkedInfromation(usedRooms)
+	startRoom.Separated = false
+	endRoom.Separated = false
 	return isFind
+}
+
+// addNext - add into usableRoomsQueue next room
+func addNext(cur, next *room, state int, visitedRooms map[*room]bool, usableRoomsQueue *sortedQueue) {
+	weight := cur.Weight + cur.Paths[next]
+	if !visitedRooms[next] {
+		markNext(cur, next, weight, visitedRooms)
+		usableRoomsQueue.Enqueue(next)
+		return
+	}
+	if (next.Separated && !next.Marked) && cur.Paths[next] == RESERVED {
+		if next.Weight >= weight {
+			markNext(cur, next, weight, visitedRooms)
+		} else {
+			next.Marked = true
+		}
+	} else if next.Weight > weight {
+		markNext(cur, next, weight, visitedRooms)
+	} else {
+		return
+	}
+	usableRoomsQueue.SortEnqueue(next)
+}
+
+// markNext - mark flags and set weight
+func markNext(parent, cur *room, weight int, visitedRooms map[*room]bool) {
+	visitedRooms[cur] = true
+	cur.Weight = weight
+	cur.Parent = parent
+	if !cur.Separated {
+		return
+	}
+	if parent.Paths[cur] == RESERVED {
+		cur.Marked = true
+	} else {
+		cur.Marked = false
+	}
+}
+
+// replaceEdges - replace edges for finded paths. (Suurballe`s algorithm)
+func replaceEdges(startRoom, endRoom *room) {
+	r := endRoom
+	for r != startRoom {
+		if r.Paths[r.Parent] == STABLE {
+			r.Parent.Separated = true
+			r.Separated = true
+			r.Paths[r.Parent] = RESERVED
+			r.Parent.Paths[r] = BLOCKED
+		} else {
+			r.Parent.Separated = false
+			r.Paths[r.Parent] = STABLE
+			r.Parent.Paths[r] = STABLE
+		}
+		r = r.Parent
+	}
 }
 
 // checking effective of new short path
@@ -52,25 +89,40 @@ func searchShortPath(terrain *anthill) bool {
 // if not then return previous result (returns false)
 func checkEffective(terrain *anthill) bool {
 	startRoom, endRoom := terrain.Rooms[terrain.Start], terrain.Rooms[terrain.End]
-	i, lenNewPaths := 0, len(startRoom.PathsIn)
-	newPaths := make([]*list, lenNewPaths)
-	for _, value := range endRoom.PathsIn {
-		newPaths[i] = &list{}
-		newPaths[i].PushFront(endRoom)
-		cur := value
-		for cur != startRoom {
-			// if len(cur.PathsIn) != 1 {
-			// 	log.Fatal(len(cur.PathsIn))
-			// }
-			newPaths[i].PushFront(cur)
-			for _, next := range cur.PathsIn {
-				cur = next
-			}
+	i, lenNewPaths := 0, 0
+	for _, value := range startRoom.Paths {
+		if value == BLOCKED {
+			lenNewPaths++
 		}
-		// newPaths[i].PushFront(startRoom)
-		i++
 	}
-	// printPaths(newPaths)
+	newPaths := make([]*list, lenNewPaths)
+	for key, value := range startRoom.Paths {
+		if value == BLOCKED {
+			newPaths[i] = &list{}
+			cur := key
+			for cur != endRoom {
+				newPaths[i].PushBack(cur)
+				for next, vNext := range cur.Paths {
+					if vNext == BLOCKED {
+						cur = next
+						break
+					}
+				}
+			}
+			newPaths[i].PushBack(endRoom)
+			i++
+		}
+	}
+	// fmt.Println("###")
+	// for _, v := range newPaths {
+	// 	fr := v.Front
+	// 	for fr != v.Back {
+	// 		fmt.Printf("%s -> ", fr.Room.Name)
+	// 		fr = fr.Next
+	// 	}
+	// 	fmt.Printf("%s\n", fr.Room.Name)
+	// }
+	// fmt.Println("###")
 	curStepsCount := fastCalcSteps(terrain.AntsCount, newPaths)
 	// fmt.Printf("%d ants, %d paths, %d steps\n", terrain.AntsCount, len(newPaths), curStepsCount)
 	if terrain.StepsCount == 0 || terrain.StepsCount > curStepsCount {
@@ -150,86 +202,4 @@ func calcSteps(antsCount int, sortedPaths []*list) (int, []int) {
 		}
 	}
 	return steps, result
-}
-
-// addNext - add usableRoomsList next rooms. Returns true if find End room (Using On BFS, Modified Suurballe`s algorithm)
-func addNext(current, endRoom *room, usedRooms map[*room]bool, usableRoomsList *list, mark bool) bool {
-	paths := current.PathsOut
-	if mark {
-		paths = current.PathsIn
-	}
-	for _, value := range paths {
-		// check if parent doesn't using on path then MarkedIn
-		// if both using on path then MarkedOut
-		// if value doesn't using on path then usedRooms
-		if !current.UsingOnPath && value.UsingOnPath && value.MarkedIn {
-			continue
-		} else if current.UsingOnPath && value.UsingOnPath && value.MarkedOut {
-			continue
-		} else if !value.UsingOnPath && usedRooms[value] {
-			continue
-		}
-		// check if room using in path
-		if value.UsingOnPath {
-			if current.UsingOnPath {
-				value.MarkedOut = true
-				value.ParentOut = current
-			}
-			if !value.MarkedIn {
-				value.MarkedIn = true
-				value.ParentIn = current
-			}
-		} else {
-			value.MarkedIn, value.MarkedOut = true, true
-			value.ParentIn, value.ParentOut = current, current
-		}
-		usedRooms[value] = true
-		if value == endRoom {
-			return true
-		}
-		usableRoomsList.PushBack(value)
-	}
-	return false
-}
-
-// replaceEdges - replace edges for finded paths. (Suurballe`s algorithm)
-func replaceEdges(startRoom, endRoom *room) {
-	var next *room
-	cur, prev := endRoom.ParentIn, endRoom
-	if cur == nil {
-		cur = endRoom.ParentOut
-	}
-	delete(endRoom.PathsOut, cur.Name)
-	delete(cur.PathsOut, endRoom.Name)
-	endRoom.PathsIn[cur.Name] = cur
-	for cur != startRoom {
-		if _, ok := cur.PathsIn[prev.Name]; ok {
-			delete(cur.PathsIn, prev.Name)
-			next = cur.ParentIn
-		} else {
-			next = cur.ParentOut
-		}
-		if cur.UsingOnPath && next.UsingOnPath {
-			cur.PathsOut[next.Name] = next
-			next.PathsOut[cur.Name] = cur
-		} else {
-			delete(cur.PathsOut, next.Name)
-			delete(next.PathsOut, cur.Name)
-			cur.PathsIn[next.Name] = next
-			cur.UsingOnPath = true
-		}
-		prev, cur = cur, next
-	}
-	cur.PathsIn[prev.Name] = prev
-}
-
-// clearMarkedInfromation - clean the markers so as not to interfere with subsequent new paths
-func clearMarkedInfromation(usedRooms map[*room]bool) {
-	for key := range usedRooms {
-		if len(key.PathsIn) < 1 {
-			key.UsingOnPath = false
-		}
-		key.ParentIn, key.ParentOut = nil, nil
-		key.MarkedIn, key.MarkedOut = false, false
-	}
 }

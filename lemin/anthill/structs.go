@@ -20,12 +20,13 @@ type anthill struct {
 }
 
 type room struct {
-	Name                string           // Name
-	X, Y                int              // Coordinates
-	PathsIn, PathsOut   map[string]*room // Using For Surballe algo
-	MarkedIn, MarkedOut bool             // For know using rooms
-	ParentIn, ParentOut *room            // Using For Surballe algo
-	UsingOnPath         bool             // Means - Is Using On Finded Paths
+	Name      string        // Name
+	X, Y      int           // Coordinates
+	Paths     map[*room]int // state -> RESERVED || BLOCKED || STABLE
+	Parent    *room         // Using for Surballe algo
+	Weight    int           // Using for Bellman-Ford algo
+	Separated bool          // Flag for checking separated node
+	Marked    bool          // Flag for checking in and out nodes
 }
 
 // with fieldInfo, we understand What data we fill in for the anthill
@@ -60,4 +61,10 @@ type antStruct struct {
 type antQueue struct {
 	Front *antStruct
 	Back  *antStruct
+}
+
+// queue for sorted rooms by weight
+type sortedQueue struct {
+	Front *node
+	Back  *node
 }

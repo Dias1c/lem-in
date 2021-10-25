@@ -53,11 +53,11 @@ func (a *anthill) SetRoomFromLine(line string) (*room, error) {
 	a.FieldInfo.UsingCoordinates[x][y] = true
 
 	room := &room{
-		Name:     name,
-		X:        x,
-		Y:        y,
-		PathsIn:  make(map[string]*room),
-		PathsOut: make(map[string]*room),
+		Name:   name,
+		X:      x,
+		Y:      y,
+		Paths:  make(map[*room]int),
+		Weight: 0,
 	}
 	a.Rooms[name] = room
 	return room, nil
@@ -95,7 +95,10 @@ func (a *anthill) SetPathsFromLine(line string) error {
 	if room1 == nil || room2 == nil {
 		return fmt.Errorf("path contains unknown room. Line: '%v'", line)
 	}
-	room1.PathsOut[name2] = room2
-	room2.PathsOut[name1] = room1
+	// if _, ok := room1.Paths[room2]; ok {
+	// 	return fmt.Errorf("rooms already linked. Line: '%v'", line)
+	// }
+	room1.Paths[room2] = STABLE
+	room2.Paths[room1] = STABLE
 	return nil
 }
