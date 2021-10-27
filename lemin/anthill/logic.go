@@ -1,5 +1,7 @@
 package anthill
 
+import "fmt"
+
 // SearchShortPath - search shortest path from start to end with Bellman-Ford algorithm (Suurballe`s algorithm).
 // found path state will be saved on UsingOnPath, Parent (needed to check from End Room)
 // returns true if found, otherwise false
@@ -12,20 +14,40 @@ func searchShortPath(terrain *anthill) bool {
 	usableRoomsQueue.Enqueue(startRoom)
 	for usableRoomsQueue.Front != nil && !visitedRooms[endRoom] {
 		current := usableRoomsQueue.Dequeue().Room
+		// fmt.Printf("Current: %s\n", current.Name)
 		for next, value := range current.Paths {
 			if value == BLOCKED || (current.Separated && !current.Marked && value == STABLE) {
 				continue
 			}
 			addNext(current, next, value, visitedRooms, usableRoomsQueue)
 		}
+		// fmt.Print("Queue state: ")
+		// usableRoomsQueue.DebugPrint()
+		// fmt.Println()
 	}
 	isFind := visitedRooms[endRoom]
+	// debugVisitedRooms(visitedRooms)
 	if isFind {
+		// to do replace edges
 		replaceEdges(startRoom, endRoom)
 	}
 	startRoom.Separated = false
 	endRoom.Separated = false
 	return isFind
+}
+
+func debugVisitedRooms(visitedRooms map[*room]bool) {
+	fmt.Println("### Debug Visited Rooms ###")
+	i := 1
+	for key := range visitedRooms {
+		parentName := "nil"
+		if key.Parent != nil {
+			parentName = key.Parent.Name
+		}
+		fmt.Printf("%d. Room: %s\n\tParent: %s\n\tWeight: %d\n", i, key.Name, parentName, key.Weight)
+		i++
+	}
+	fmt.Println("###########################\n")
 }
 
 // addNext - add into usableRoomsQueue next room
@@ -45,6 +67,11 @@ func addNext(cur, next *room, state int, visitedRooms map[*room]bool, usableRoom
 	} else if next.Weight > weight {
 		markNext(cur, next, weight, visitedRooms)
 	} else {
+		// if next.Separated {
+		// 	fmt.Printf("Returned: %s|sep\n", next.Name)
+		// } else {
+		// 	fmt.Printf("Returned: %s\n", next.Name)
+		// }
 		return
 	}
 	usableRoomsQueue.SortEnqueue(next)
@@ -52,6 +79,14 @@ func addNext(cur, next *room, state int, visitedRooms map[*room]bool, usableRoom
 
 // markNext - mark flags and set weight
 func markNext(parent, cur *room, weight int, visitedRooms map[*room]bool) {
+	// if !visitedRooms[cur] {
+	// 	fmt.Printf("#Visited first: %s\n", cur.Name)
+	// }
+	// if cur.Separated {
+	// 	fmt.Printf("Added: %s|sep\t%s\t%d\n", cur.Name, parent.Name, weight)
+	// } else {
+	// 	fmt.Printf("Added: %s\t%s\t%d\n", cur.Name, parent.Name, weight)
+	// }
 	visitedRooms[cur] = true
 	cur.Weight = weight
 	cur.Parent = parent
@@ -113,7 +148,7 @@ func checkEffective(terrain *anthill) bool {
 			i++
 		}
 	}
-	// fmt.Println("###")
+	// fmt.Println("### Debug Paths ###")
 	// for _, v := range newPaths {
 	// 	fr := v.Front
 	// 	for fr != v.Back {
@@ -122,7 +157,7 @@ func checkEffective(terrain *anthill) bool {
 	// 	}
 	// 	fmt.Printf("%s\n", fr.Room.Name)
 	// }
-	// fmt.Println("###")
+	// fmt.Println("###################\n")
 	curStepsCount := fastCalcSteps(terrain.AntsCount, newPaths)
 	// fmt.Printf("%d ants, %d paths, %d steps\n", terrain.AntsCount, len(newPaths), curStepsCount)
 	if terrain.StepsCount == 0 || terrain.StepsCount > curStepsCount {

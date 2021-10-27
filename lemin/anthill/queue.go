@@ -1,5 +1,7 @@
 package anthill
 
+import "fmt"
+
 func (q *antQueue) Enqueue(num, path, pos int) {
 	ant := &antStruct{
 		Num:  num,
@@ -47,15 +49,21 @@ func (q *sortedQueue) Enqueue(r *room) {
 	if q.Back == nil {
 		q.Front = n
 		q.Back = n
+		// fmt.Print("s1: ")
+		// q.DebugPrint()
 		return
 	}
 	if q.Front.Room.Weight >= n.Room.Weight {
 		n.Next = q.Front
 		q.Front = n
+		// fmt.Print("s2: ")
+		// q.DebugPrint()
 		return
 	} else if q.Back.Room.Weight < n.Room.Weight {
 		q.Back.Next = n
 		q.Back = n
+		// fmt.Print("s3: ")
+		// q.DebugPrint()
 		return
 	}
 	prev, cur := q.Front, q.Front.Next
@@ -63,9 +71,11 @@ func (q *sortedQueue) Enqueue(r *room) {
 		if cur.Room.Weight >= n.Room.Weight {
 			prev.Next = n
 			n.Next = cur
+			// fmt.Print("s4: ")
+			// q.DebugPrint()
 			return
 		}
-		cur = cur.Next
+		prev, cur = cur, cur.Next
 	}
 }
 
@@ -80,6 +90,8 @@ func (q *sortedQueue) Dequeue() *node {
 	} else {
 		q.Front = q.Front.Next
 	}
+	// fmt.Print("s5: ")
+	// q.DebugPrint()
 	return res
 }
 
@@ -89,6 +101,8 @@ func (q *sortedQueue) SortEnqueue(r *room) {
 		if q.Front == nil {
 			q.Back = nil
 		}
+		// fmt.Print("s6: ")
+		// q.DebugPrint()
 		q.Enqueue(r)
 		return
 	}
@@ -99,10 +113,27 @@ func (q *sortedQueue) SortEnqueue(r *room) {
 			if cur == q.Back {
 				q.Back = prev
 			}
+			// fmt.Print("s7: ")
+			// q.DebugPrint()
 			q.Enqueue(r)
 			return
 		}
 		prev, cur = cur, cur.Next
 	}
+	// fmt.Print("s8: ")
+	// q.DebugPrint()
 	q.Enqueue(r)
+}
+
+func (q *sortedQueue) DebugPrint() {
+	if q.Front == nil {
+		fmt.Println("queue nil")
+		return
+	}
+	cur := q.Front
+	for cur != q.Back {
+		fmt.Printf("%s|%d --> ", cur.Room.Name, cur.Room.Weight)
+		cur = cur.Next
+	}
+	fmt.Printf("%s|%d\n", cur.Room.Name, cur.Room.Weight)
 }
