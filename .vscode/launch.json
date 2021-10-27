@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${file}",
-            "args": ["examples/my/myexample03"]
+            "args": ["test_spec"]
         },
         {
             "name": "Launch Package",

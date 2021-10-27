@@ -1,16 +1,16 @@
 #!/bin/bash
-PathToFiles="examples/audit/*"
-for file in $PathToFiles
-do
-    if [ -f "$file" ]
-    then
-        echo "Executing $file"
-        time go run . "$file"
-        echo ""
-    else
-        echo "Wrong $file"
-    fi
-done
+# PathToFiles="examples/audit/*"
+# for file in $PathToFiles
+# do
+#     if [ -f "$file" ]
+#     then
+#         echo "Executing $file"
+#         time go run . "$file"
+#         echo ""
+#     else
+#         echo "Wrong $file"
+#     fi
+# done
 
 # echo ""
 # echo "#*_*#"

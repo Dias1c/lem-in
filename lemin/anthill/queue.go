@@ -1,6 +1,9 @@
 package anthill
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func (q *antQueue) Enqueue(num, path, pos int) {
 	ant := &antStruct{
@@ -67,6 +70,7 @@ func (q *sortedQueue) Enqueue(r *room) {
 		return
 	}
 	prev, cur := q.Front, q.Front.Next
+	i := 0
 	for cur != nil {
 		if cur.Room.Weight >= n.Room.Weight {
 			prev.Next = n
@@ -75,7 +79,11 @@ func (q *sortedQueue) Enqueue(r *room) {
 			// q.DebugPrint()
 			return
 		}
+		if i == 1000000 {
+			os.Exit(1)
+		}
 		prev, cur = cur, cur.Next
+		i++
 	}
 }
 
@@ -136,4 +144,17 @@ func (q *sortedQueue) DebugPrint() {
 		cur = cur.Next
 	}
 	fmt.Printf("%s|%d\n", cur.Room.Name, cur.Room.Weight)
+}
+
+func (q *sortedQueue) DebugLen() int {
+	if q.Front == nil {
+		return 0
+	}
+	res := 1
+	cur := q.Front
+	for cur != q.Back {
+		cur = cur.Next
+		res++
+	}
+	return res
 }

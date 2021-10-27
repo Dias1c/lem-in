@@ -1,6 +1,9 @@
 package anthill
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 // SearchShortPath - search shortest path from start to end with Bellman-Ford algorithm (Suurballe`s algorithm).
 // found path state will be saved on UsingOnPath, Parent (needed to check from End Room)
@@ -12,6 +15,7 @@ func searchShortPath(terrain *anthill) bool {
 	endRoom := terrain.Rooms[terrain.End]
 	visitedRooms[startRoom] = true
 	usableRoomsQueue.Enqueue(startRoom)
+	i := 0
 	for usableRoomsQueue.Front != nil && !visitedRooms[endRoom] {
 		current := usableRoomsQueue.Dequeue().Room
 		// fmt.Printf("Current: %s\n", current.Name)
@@ -19,8 +23,17 @@ func searchShortPath(terrain *anthill) bool {
 			if value == BLOCKED || (current.Separated && !current.Marked && value == STABLE) {
 				continue
 			}
+			// fmt.Printf("Adding new %s\n", next.Name)
 			addNext(current, next, value, visitedRooms, usableRoomsQueue)
 		}
+		if i == 1000 {
+			fmt.Print("Queue state: ")
+			usableRoomsQueue.DebugPrint()
+			fmt.Println()
+			os.Exit(3)
+		}
+		i++
+		// fmt.Println(i)
 		// fmt.Print("Queue state: ")
 		// usableRoomsQueue.DebugPrint()
 		// fmt.Println()
@@ -30,6 +43,9 @@ func searchShortPath(terrain *anthill) bool {
 	if isFind {
 		// to do replace edges
 		replaceEdges(startRoom, endRoom)
+	}
+	for key := range visitedRooms {
+		key.Marked = false
 	}
 	startRoom.Separated = false
 	endRoom.Separated = false
@@ -56,6 +72,7 @@ func addNext(cur, next *room, state int, visitedRooms map[*room]bool, usableRoom
 	if !visitedRooms[next] {
 		markNext(cur, next, weight, visitedRooms)
 		usableRoomsQueue.Enqueue(next)
+		// fmt.Printf("New room added: %s|%d\n", next.Name, weight)
 		return
 	}
 	if (next.Separated && !next.Marked) && cur.Paths[next] == RESERVED {
@@ -75,6 +92,7 @@ func addNext(cur, next *room, state int, visitedRooms map[*room]bool, usableRoom
 		return
 	}
 	usableRoomsQueue.SortEnqueue(next)
+	// fmt.Printf("Visited room added: %s|%d\n", next.Name, weight)
 }
 
 // markNext - mark flags and set weight
@@ -102,8 +120,24 @@ func markNext(parent, cur *room, weight int, visitedRooms map[*room]bool) {
 
 // replaceEdges - replace edges for finded paths. (Suurballe`s algorithm)
 func replaceEdges(startRoom, endRoom *room) {
+	i := 0
 	r := endRoom
+	fmt.Printf("%s --> ", r.Name)
+	inPath := make(map[*room]bool)
 	for r != startRoom {
+		if r.Parent.Separated && r.Parent.Marked && r.Paths[r.Parent] == STABLE {
+			for key, value := range r.Parent.Paths {
+				if value == BLOCKED {
+					r.Parent.Parent = key
+					break
+				}
+			}
+		}
+		if inPath[r.Parent] {
+			setNewParent(r.Parent)
+		}
+		inPath[r.Parent] = true
+		// reversing
 		if r.Paths[r.Parent] == STABLE {
 			r.Parent.Separated = true
 			r.Separated = true
@@ -115,6 +149,25 @@ func replaceEdges(startRoom, endRoom *room) {
 			r.Parent.Paths[r] = STABLE
 		}
 		r = r.Parent
+		fmt.Printf("%s --> ", r.Name)
+		if i == 100 {
+			os.Exit(2)
+		}
+		i++
+	}
+	fmt.Println()
+}
+
+func setNewParent(current *room) {
+	minWeight := int(^uint(0) >> 1) // max int
+	for key, value := range current.Paths {
+		if value == STABLE {
+			if key.Weight > minWeight {
+				continue
+			}
+			minWeight = key.Weight
+			current.Parent = key
+		}
 	}
 }
 
@@ -148,16 +201,16 @@ func checkEffective(terrain *anthill) bool {
 			i++
 		}
 	}
-	// fmt.Println("### Debug Paths ###")
-	// for _, v := range newPaths {
-	// 	fr := v.Front
-	// 	for fr != v.Back {
-	// 		fmt.Printf("%s -> ", fr.Room.Name)
-	// 		fr = fr.Next
-	// 	}
-	// 	fmt.Printf("%s\n", fr.Room.Name)
-	// }
-	// fmt.Println("###################\n")
+	fmt.Println("### Debug Paths ###")
+	for _, v := range newPaths {
+		fr := v.Front
+		for fr != v.Back {
+			fmt.Printf("%s -> ", fr.Room.Name)
+			fr = fr.Next
+		}
+		fmt.Printf("%s\n", fr.Room.Name)
+	}
+	fmt.Println("###################\n")
 	curStepsCount := fastCalcSteps(terrain.AntsCount, newPaths)
 	// fmt.Printf("%d ants, %d paths, %d steps\n", terrain.AntsCount, len(newPaths), curStepsCount)
 	if terrain.StepsCount == 0 || terrain.StepsCount > curStepsCount {
