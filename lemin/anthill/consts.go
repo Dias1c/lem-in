@@ -1,5 +1,7 @@
 package anthill
 
+// var MAX_INT int = int(^uint(0) >> 1)
+
 // Modes for FieldInfo
 const (
 	FIELD_ANTS  = iota // On Reading Ants
@@ -9,7 +11,7 @@ const (
 
 // Modes for Path
 const (
-	RESERVED = -1 // directed, reserved path (from end to start)
+	REVERSED = -1 // directed, REVERSED path (from end to start)
 	BLOCKED  = 0  // blocked path (from start to end)
 	STABLE   = 1  // double directed path
 )

@@ -1,8 +1,7 @@
 package anthill
 
 import (
-	"fmt"
-	"os"
+	"log"
 )
 
 // SearchShortPath - search shortest path from start to end with Bellman-Ford algorithm (Suurballe`s algorithm).
@@ -10,166 +9,261 @@ import (
 // returns true if found, otherwise false
 func searchShortPath(terrain *anthill) bool {
 	usableRoomsQueue := &sortedQueue{}
-	visitedRooms := make(map[*room]bool)
 	startRoom := terrain.Rooms[terrain.Start]
 	endRoom := terrain.Rooms[terrain.End]
-	visitedRooms[startRoom] = true
-	usableRoomsQueue.Enqueue(startRoom)
-	i := 0
-	for usableRoomsQueue.Front != nil && !visitedRooms[endRoom] {
-		current := usableRoomsQueue.Dequeue().Room
+	startRoom.VisitIn, startRoom.VisitOut = true, true
+	usableRoomsQueue.Enqueue(startRoom, 0, true)
+	// i := 0
+	for usableRoomsQueue.Front != nil && !(endRoom.VisitIn || endRoom.VisitOut) {
+		current := usableRoomsQueue.Dequeue()
+		currentRoom := current.Room
 		// fmt.Printf("Current: %s\n", current.Name)
-		for next, value := range current.Paths {
-			if value == BLOCKED || (current.Separated && !current.Marked && value == STABLE) {
+		for next, value := range currentRoom.Paths {
+			if value == BLOCKED || (!current.Mark && value == STABLE) {
 				continue
 			}
-			// fmt.Printf("Adding new %s\n", next.Name)
-			addNext(current, next, value, visitedRooms, usableRoomsQueue)
+			// str := "BLOCKED"
+			// if value == STABLE {
+			// 	str = "STABLE"
+			// } else if value == REVERSED {
+			// 	str = "REVERSED"
+			// }
+			// fmt.Printf("Adding %s from %s with %s\n", next.Name, current.Name, str)
+			addNext(currentRoom, next, current.Weight, value, usableRoomsQueue)
 		}
-		if i == 1000 {
-			fmt.Print("Queue state: ")
-			usableRoomsQueue.DebugPrint()
-			fmt.Println()
-			os.Exit(3)
-		}
-		i++
+		// if i == 1000 {
+		// 	fmt.Print("Queue state: ")
+		// 	usableRoomsQueue.DebugPrint()
+		// 	fmt.Println()
+		// 	os.Exit(3)
+		// }
+		// i++
 		// fmt.Println(i)
 		// fmt.Print("Queue state: ")
 		// usableRoomsQueue.DebugPrint()
 		// fmt.Println()
 	}
-	isFind := visitedRooms[endRoom]
+	isFind := endRoom.VisitIn || endRoom.VisitOut
+	// fmt.Print("Queue state: ")
+	// usableRoomsQueue.DebugPrint()
+	// fmt.Println()
 	// debugVisitedRooms(visitedRooms)
 	if isFind {
+		// fmt.Println("### Debug Visited Rooms ###")
+		// for _, value := range terrain.Rooms {
+		// 	if value.VisitIn || value.VisitOut {
+		// 		parentInName, parentOutName := "nil", "nil"
+		// 		if value.ParentIn != nil {
+		// 			parentInName = value.ParentIn.Name
+		// 		}
+		// 		if value.ParentOut != nil {
+		// 			parentOutName = value.ParentOut.Name
+		// 		}
+		// 		fmt.Printf("Room: %s\n\tParent: o-%s, i-%s\n\tWeight: o-%d, i-%d\n", value.Name, parentOutName, parentInName, value.Weight[0], value.Weight[1])
+		// 	}
+		// }
+		// fmt.Println("###########################\n")
 		// to do replace edges
 		replaceEdges(startRoom, endRoom)
-	}
-	for key := range visitedRooms {
-		key.Marked = false
+		// clear flags
+		for _, value := range terrain.Rooms {
+			if value.VisitIn || value.VisitOut {
+				value.ParentIn, value.ParentOut = nil, nil
+				value.VisitIn, value.VisitOut = false, false
+				value.Weight[0], value.Weight[1] = 0, 0
+				value.InNewPath = false
+			}
+		}
 	}
 	startRoom.Separated = false
 	endRoom.Separated = false
 	return isFind
 }
 
-func debugVisitedRooms(visitedRooms map[*room]bool) {
-	fmt.Println("### Debug Visited Rooms ###")
-	i := 1
-	for key := range visitedRooms {
-		parentName := "nil"
-		if key.Parent != nil {
-			parentName = key.Parent.Name
-		}
-		fmt.Printf("%d. Room: %s\n\tParent: %s\n\tWeight: %d\n", i, key.Name, parentName, key.Weight)
-		i++
-	}
-	fmt.Println("###########################\n")
-}
+// func debugVisitedRooms(visitedRooms map[*room]bool) {
+// 	fmt.Println("### Debug Visited Rooms ###")
+// 	i := 1
+// 	for key := range visitedRooms {
+// 		parentName := "nil"
+// 		if key.Parent != nil {
+// 			parentName = key.Parent.Name
+// 		}
+// 		fmt.Printf("%d. Room: %s\n\tParent: %s\n\tWeight: %d\n", i, key.Name, parentName, key.Weight)
+// 		i++
+// 	}
+// 	fmt.Println("###########################\n")
+// }
 
 // addNext - add into usableRoomsQueue next room
-func addNext(cur, next *room, state int, visitedRooms map[*room]bool, usableRoomsQueue *sortedQueue) {
-	weight := cur.Weight + cur.Paths[next]
-	if !visitedRooms[next] {
-		markNext(cur, next, weight, visitedRooms)
-		usableRoomsQueue.Enqueue(next)
+func addNext(cur, next *room, weight, state int, usableRoomsQueue *sortedQueue) {
+	if !(next.VisitIn || next.VisitOut) {
+		if next.Separated {
+			next.VisitIn = true
+			next.ParentIn = cur
+			next.Weight[1] = weight + state
+			if state == STABLE {
+				usableRoomsQueue.Enqueue(next, next.Weight[1], false)
+				return
+			}
+		}
+		next.VisitOut = true
+		next.ParentOut = cur
+		next.Weight[0] = weight + state
+		usableRoomsQueue.Enqueue(next, next.Weight[0], true)
 		// fmt.Printf("New room added: %s|%d\n", next.Name, weight)
 		return
 	}
-	if (next.Separated && !next.Marked) && cur.Paths[next] == RESERVED {
-		if next.Weight >= weight {
-			markNext(cur, next, weight, visitedRooms)
-		} else {
-			next.Marked = true
+	if !next.Separated {
+		if weight+state >= next.Weight[0] {
+			return
 		}
-	} else if next.Weight > weight {
-		markNext(cur, next, weight, visitedRooms)
+		next.ParentOut = cur
+		next.Weight[0] = weight + state
+		usableRoomsQueue.Enqueue(next, next.Weight[0], true)
 	} else {
-		// if next.Separated {
-		// 	fmt.Printf("Returned: %s|sep\n", next.Name)
-		// } else {
-		// 	fmt.Printf("Returned: %s\n", next.Name)
-		// }
-		return
+		if state == STABLE {
+			if next.VisitIn && weight+state >= next.Weight[1] {
+				return
+			}
+			next.VisitIn = true
+			next.ParentIn = cur
+			next.Weight[1] = weight + state
+			usableRoomsQueue.Enqueue(next, next.Weight[1], false)
+		} else {
+			if (next.VisitIn && weight+state < next.Weight[1]) || !next.VisitIn {
+				next.VisitIn = true
+				next.ParentIn = cur
+				next.Weight[1] = weight + state
+				usableRoomsQueue.Enqueue(next, next.Weight[1], false)
+			}
+			if (next.VisitOut && weight+state < next.Weight[0]) || !next.VisitOut {
+				next.VisitOut = true
+				next.ParentOut = cur
+				next.Weight[0] = weight + state
+				usableRoomsQueue.Enqueue(next, next.Weight[0], true)
+			}
+		}
 	}
-	usableRoomsQueue.SortEnqueue(next)
-	// fmt.Printf("Visited room added: %s|%d\n", next.Name, weight)
-}
-
-// markNext - mark flags and set weight
-func markNext(parent, cur *room, weight int, visitedRooms map[*room]bool) {
-	// if !visitedRooms[cur] {
-	// 	fmt.Printf("#Visited first: %s\n", cur.Name)
-	// }
-	// if cur.Separated {
-	// 	fmt.Printf("Added: %s|sep\t%s\t%d\n", cur.Name, parent.Name, weight)
+	// if next.Separated && !next.Marked && cur.Paths[next] == REVERSED {
+	// 	if next.Weight < weight {
+	// 		next.Marked = true
+	// 	} else {
+	// 		markNext(cur, next, weight, visitedRooms)
+	// 	}
+	// } else if next.Weight > weight {
+	// 	markNext(cur, next, weight, visitedRooms)
 	// } else {
-	// 	fmt.Printf("Added: %s\t%s\t%d\n", cur.Name, parent.Name, weight)
+	// 	if next.Separated {
+	// 		fmt.Printf("Returned: %s|sep\n", next.Name)
+	// 	} else {
+	// 		fmt.Printf("Returned: %s\n", next.Name)
+	// 	}
+	// 	return
 	// }
-	visitedRooms[cur] = true
-	cur.Weight = weight
-	cur.Parent = parent
-	if !cur.Separated {
-		return
-	}
-	if parent.Paths[cur] == RESERVED {
-		cur.Marked = true
-	} else {
-		cur.Marked = false
-	}
+	// usableRoomsQueue.SortEnqueue(next)
+	// fmt.Printf("Visited room added: %s|%d\n", next.Name, weight)
 }
 
 // replaceEdges - replace edges for finded paths. (Suurballe`s algorithm)
 func replaceEdges(startRoom, endRoom *room) {
-	i := 0
 	r := endRoom
-	fmt.Printf("%s --> ", r.Name)
-	inPath := make(map[*room]bool)
+	// fmt.Printf("%s --> ", r.Name)
 	for r != startRoom {
-		if r.Parent.Separated && r.Parent.Marked && r.Paths[r.Parent] == STABLE {
-			for key, value := range r.Parent.Paths {
+		var parent *room
+		if r.ParentOut != nil && r.ParentIn != nil {
+			i := 0
+			for _, value := range r.Paths {
 				if value == BLOCKED {
-					r.Parent.Parent = key
-					break
+					i++
 				}
 			}
-		}
-		if inPath[r.Parent] {
-			setNewParent(r.Parent)
-		}
-		inPath[r.Parent] = true
-		// reversing
-		if r.Paths[r.Parent] == STABLE {
-			r.Parent.Separated = true
-			r.Separated = true
-			r.Paths[r.Parent] = RESERVED
-			r.Parent.Paths[r] = BLOCKED
+			if i != 1 {
+				if r.Paths[r.ParentOut] == BLOCKED {
+					parent = r.ParentOut
+				} else {
+					parent = r.ParentIn
+				}
+			} else {
+				if r.Paths[r.ParentOut] == STABLE {
+					parent = r.ParentOut
+				} else {
+					parent = r.ParentIn
+				}
+			}
+		} else if r.ParentOut != nil {
+			parent = r.ParentOut
 		} else {
-			r.Parent.Separated = false
-			r.Paths[r.Parent] = STABLE
-			r.Parent.Paths[r] = STABLE
+			parent = r.ParentIn
 		}
-		r = r.Parent
-		fmt.Printf("%s --> ", r.Name)
-		if i == 100 {
-			os.Exit(2)
+
+		// reversing
+		if r.Paths[parent] == STABLE {
+			parent.Separated = true
+			r.Separated = true
+			r.Paths[parent] = REVERSED
+			parent.Paths[r] = BLOCKED
+		} else if r.Paths[parent] == REVERSED {
+			log.Fatalf("path %s-%s is REVERSED", r.Name, parent.Name)
+		} else {
+			parent.Separated = false
+			r.Paths[parent] = STABLE
+			parent.Paths[r] = STABLE
 		}
-		i++
+		r = parent
+		// fmt.Printf("%s --> ", r.Name)
 	}
-	fmt.Println()
+	// fmt.Println()
+	// i := 0
+	// r := endRoom
+	// fmt.Printf("%s --> ", r.Name)
+	// for r != startRoom {
+	// 	if r.Parent.Separated && r.Parent.Marked && r.Paths[r.Parent] == STABLE {
+	// 		for key, value := range r.Parent.Paths {
+	// 			if value == BLOCKED {
+	// 				fmt.Printf("\nChange parent %s from %s to %s\n", r.Parent.Name, r.Parent.Parent.Name, key.Name)
+	// 				r.Parent.Parent = key
+	// 				break
+	// 			}
+	// 		}
+	// 	}
+	// 	if r.Parent.InNewPath {
+	// 		setNewParent(r.Parent)
+	// 	}
+	// 	r.Parent.InNewPath = true
+	// 	// reversing
+	// 	if r.Paths[r.Parent] == STABLE {
+	// 		r.Parent.Separated = true
+	// 		r.Separated = true
+	// 		r.Paths[r.Parent] = REVERSED
+	// 		r.Parent.Paths[r] = BLOCKED
+	// 	} else if r.Paths[r.Parent] == REVERSED {
+	// 		log.Fatalf("path %s-%s is REVERSED", r.Name, r.Parent.Name)
+	// 	} else {
+	// 		r.Parent.Separated = false
+	// 		r.Paths[r.Parent] = STABLE
+	// 		r.Parent.Paths[r] = STABLE
+	// 	}
+	// 	r = r.Parent
+	// 	fmt.Printf("%s --> ", r.Name)
+	// 	if i == 100 {
+	// 		os.Exit(2)
+	// 	}
+	// 	i++
+	// }
+	// fmt.Println()
 }
 
-func setNewParent(current *room) {
-	minWeight := int(^uint(0) >> 1) // max int
-	for key, value := range current.Paths {
-		if value == STABLE {
-			if key.Weight > minWeight {
-				continue
-			}
-			minWeight = key.Weight
-			current.Parent = key
-		}
-	}
-}
+// func setNewParent(current *room) {
+// 	minWeight := MAX_INT // max int
+// 	for key, value := range current.Paths {
+// 		if value == STABLE {
+// 			if key.Weight < minWeight {
+// 				minWeight = key.Weight
+// 				current.Parent = key
+// 			}
+// 		}
+// 	}
+// }
 
 // checking effective of new short path
 // current steps count < previous steps count
@@ -201,16 +295,16 @@ func checkEffective(terrain *anthill) bool {
 			i++
 		}
 	}
-	fmt.Println("### Debug Paths ###")
-	for _, v := range newPaths {
-		fr := v.Front
-		for fr != v.Back {
-			fmt.Printf("%s -> ", fr.Room.Name)
-			fr = fr.Next
-		}
-		fmt.Printf("%s\n", fr.Room.Name)
-	}
-	fmt.Println("###################\n")
+	// fmt.Println("### Debug #Paths ###")
+	// for _, v := range newPaths {
+	// 	fr := v.Front
+	// 	for fr != v.Back {
+	// 		fmt.Printf("%s -> ", fr.Room.Name)
+	// 		fr = fr.Next
+	// 	}
+	// 	fmt.Printf("%s\n", fr.Room.Name)
+	// }
+	// fmt.Println("####################\n")
 	curStepsCount := fastCalcSteps(terrain.AntsCount, newPaths)
 	// fmt.Printf("%d ants, %d paths, %d steps\n", terrain.AntsCount, len(newPaths), curStepsCount)
 	if terrain.StepsCount == 0 || terrain.StepsCount > curStepsCount {

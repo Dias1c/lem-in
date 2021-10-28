@@ -57,7 +57,7 @@ func (a *anthill) SetRoomFromLine(line string) (*room, error) {
 		X:      x,
 		Y:      y,
 		Paths:  make(map[*room]int),
-		Weight: 0,
+		Weight: [2]int{0, 0},
 	}
 	a.Rooms[name] = room
 	return room, nil

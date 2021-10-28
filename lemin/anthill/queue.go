@@ -2,7 +2,7 @@ package anthill
 
 import (
 	"fmt"
-	"os"
+	"log"
 )
 
 func (q *antQueue) Enqueue(num, path, pos int) {
@@ -45,49 +45,43 @@ func (q *antQueue) EnqueueAnt(ant *antStruct) {
 	q.Back = ant
 }
 
-func (q *sortedQueue) Enqueue(r *room) {
-	n := &node{
-		Room: r,
+func (q *sortedQueue) Enqueue(r *room, weight int, mark bool) {
+	node := &weightNode{
+		Room:   r,
+		Weight: weight,
+		Mark:   mark,
 	}
-	if q.Back == nil {
-		q.Front = n
-		q.Back = n
-		// fmt.Print("s1: ")
-		// q.DebugPrint()
+	if q.Front == nil {
+		q.Front = node
+		q.Back = node
 		return
 	}
-	if q.Front.Room.Weight >= n.Room.Weight {
-		n.Next = q.Front
-		q.Front = n
-		// fmt.Print("s2: ")
-		// q.DebugPrint()
+	if q.Front.Weight > weight {
+		node.Next = q.Front
+		q.Front = node
 		return
-	} else if q.Back.Room.Weight < n.Room.Weight {
-		q.Back.Next = n
-		q.Back = n
-		// fmt.Print("s3: ")
-		// q.DebugPrint()
+	} else if q.Back.Weight <= weight {
+		q.Back.Next = node
+		q.Back = node
 		return
 	}
-	prev, cur := q.Front, q.Front.Next
-	i := 0
+	if q.Front == q.Back {
+		log.Fatal("Enqueue #1 front == back")
+	}
+	prev := q.Front
+	cur := prev.Next
 	for cur != nil {
-		if cur.Room.Weight >= n.Room.Weight {
-			prev.Next = n
-			n.Next = cur
-			// fmt.Print("s4: ")
-			// q.DebugPrint()
+		if cur.Weight > weight {
+			prev.Next = node
+			node.Next = cur
 			return
 		}
-		if i == 1000000 {
-			os.Exit(1)
-		}
-		prev, cur = cur, cur.Next
-		i++
+		prev = cur
+		cur = cur.Next
 	}
 }
 
-func (q *sortedQueue) Dequeue() *node {
+func (q *sortedQueue) Dequeue() *weightNode {
 	if q.Front == nil {
 		return nil
 	}
@@ -98,39 +92,72 @@ func (q *sortedQueue) Dequeue() *node {
 	} else {
 		q.Front = q.Front.Next
 	}
-	// fmt.Print("s5: ")
-	// q.DebugPrint()
 	return res
 }
 
-func (q *sortedQueue) SortEnqueue(r *room) {
-	if q.Front.Room == r {
-		q.Front = q.Front.Next
-		if q.Front == nil {
-			q.Back = nil
+func (q *sortedQueue) SortEnqueue(r *room, weight int, mark bool) {
+	if q.Front == nil {
+		q.Enqueue(r, weight, mark)
+		return
+	} else if q.Front.Room == r {
+		if mark {
+			if q.Front.Mark && q.Front.Weight <= weight {
+				return
+			}
+			if q.Front.Weight > weight {
+				q.Front = q.Front.Next
+				if q.Front == nil {
+					q.Back = nil
+				}
+			}
+		} else {
+			if q.Front.Mark || q.Front.Weight <= weight {
+				if q.Front.Mark && q.Front.Weight > weight {
+					q.Enqueue(r, weight, mark)
+				}
+				return
+			}
+			q.Front = q.Front.Next
+			if q.Front == nil {
+				q.Back = nil
+			}
 		}
-		// fmt.Print("s6: ")
-		// q.DebugPrint()
-		q.Enqueue(r)
+		q.Enqueue(r, weight, mark)
 		return
 	}
-	prev, cur := q.Front, q.Front.Next
+	prev := q.Front
+	cur := prev.Next
 	for cur != nil {
 		if cur.Room == r {
-			prev.Next = cur.Next
-			if cur == q.Back {
-				q.Back = prev
+			if mark {
+				if cur.Mark && cur.Weight <= weight {
+					return
+				}
+				if cur.Weight > weight {
+					prev.Next = cur.Next
+					if prev.Next == nil {
+						q.Back = prev
+					}
+				}
+			} else {
+				if cur.Mark || cur.Weight <= weight {
+					if cur.Mark && cur.Weight > weight {
+						q.Enqueue(r, weight, mark)
+					}
+					return
+				}
+				prev.Next = cur.Next
+				if prev.Next == nil {
+					q.Back = prev
+				}
 			}
-			// fmt.Print("s7: ")
-			// q.DebugPrint()
-			q.Enqueue(r)
+			q.Enqueue(r, weight, mark)
 			return
 		}
-		prev, cur = cur, cur.Next
+		prev = cur
+		cur = cur.Next
 	}
-	// fmt.Print("s8: ")
-	// q.DebugPrint()
-	q.Enqueue(r)
+	q.Enqueue(r, weight, mark)
 }
 
 func (q *sortedQueue) DebugPrint() {
