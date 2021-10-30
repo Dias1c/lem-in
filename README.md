@@ -1,6 +1,7 @@
 # lem-in
 The task of the project is [here](https://github.com/01-edu/public/tree/master/subjects/lem-in)<br>
 Wiki [here](https://github.com/Dias1c/lem-in/wiki)
+Thx for [him](https://github.com/elijahkash)
 # Chapters
 - [Briefly about the project](#Briefly-about-the-project)
 - [Graphs in file](#Graphs-in-file)

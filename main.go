@@ -9,16 +9,6 @@ import (
 	"strings"
 )
 
-// Changed
-// Colourfull Paths for easy understand
-// Fixed bugs in JS
-// Added Resize to text in Graphic
-// Readme links
-// Css
-// Writed part [How To Use + What The Program] in HTML Page
-
-// TODO Create Beautiful map for visualization
-
 func main() {
 	if len(os.Args) != 2 {
 		fmt.Println("ERROR: Program takes only 1 argument (fileName or --flags)!")

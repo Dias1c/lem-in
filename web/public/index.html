@@ -86,6 +86,13 @@ bath-EndRoom    <- Room Relations
                                 <input class="input_number" id="tb_Transition" type="number" value="200"></input>
                             </div>
                             <button class="btn" id="btn_SetParams">Set Params</button>
+                            <div class="input_group">
+                                <label class="input_title">Dynamic settings</label>
+                                <label class="input_line"><input class="input_checkbox" id="cb_ShowHideText"
+                                        type="checkbox" name="settings" />Hide
+                                    names</label>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -96,7 +103,9 @@ bath-EndRoom    <- Room Relations
                 <div class="block" id="b_what-the-project">
                     <div class="card_subtitle">What the project</div>
                     <p>
-                        This is the visual part of the work of the program "program", where the essence of the task is for ants from point A to point B to find paths that will make up the minimum number of steps.<br>
+                        This is the visual part of the work of the program "program", where the essence of the task is
+                        for ants from point A to point B to find paths that will make up the minimum number of
+                        steps.<br>
                         Read more about the project <a href="https://github.com/Dias1c/lem-in/wiki" class="link">here<a>
                     </p>
                 </div>
@@ -104,18 +113,24 @@ bath-EndRoom    <- Room Relations
                     <div class="card_subtitle">How To Use?</div>
                     <p>
                         The sending form accepts data about the anthill.<br><br>
-                        
+
                         The data about the anthill consists of 3 blocks.<br>
-                           * Block 1 is the number of ants<br>
-                           * Block 2 is information about rooms<br>
-                           * Block 3 is the relationship between rooms<br><br>
+                        * Block 1 is the number of ants<br>
+                        * Block 2 is information about rooms<br>
+                        * Block 3 is the relationship between rooms<br><br>
 
                         Rules for [block 1] the number of Ants must be greater than zero<br>
-                        Rules for [block 2] the room must consist of a name, X coordinates and Y coordinates separated by a space (Name X Y). Each room in 1 line<br>
-                        Rules for [block 3] the rooms are connected to each other by a hyphen. Each relation is in 1 line<br>
-                        and all this in strictly in sequence [block 1, block 2, block 3] (These rules apply to [Text Result] too)<br><br>
+                        Rules for [block 2] the room must consist of a name, X coordinates and Y coordinates separated
+                        by a space (Name X Y). Each room in 1 line<br>
+                        Rules for [block 3] the rooms are connected to each other by a hyphen. Each relation is in 1
+                        line<br>
+                        and all this in strictly in sequence [block 1, block 2, block 3] (These rules apply to [Text
+                        Result] too)<br><br>
 
-                        After filling in, click on Send and you will get the result in Graphic and text form. The graphic result depends on the Text result. The text result is converted to graphic via the Set Params button. In the graphical result, each path will have its own color, unused paths will be gray.
+                        After filling in, click on Send and you will get the result in Graphic and text form. The
+                        graphic result depends on the Text result. The text result is converted to graphic via the Set
+                        Params button. In the graphical result, each path will have its own color, unused paths will be
+                        gray.
                         To apply any changes in the text result or in the parameters then press Set Params.
                     </p>
                 </div>

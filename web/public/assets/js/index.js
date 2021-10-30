@@ -8,6 +8,7 @@ var l_FrameInfo = document.getElementById("l_FrameInfo")
 var tb_Content = document.getElementById("tb_Content")
 var tb_Result = document.getElementById("tb_Result")
 var IsFramePlay = false
+var cb_ShowHideText = document.getElementById("cb_ShowHideText")
 
 var popup = {
     Window: document.getElementById("window"),
@@ -84,6 +85,7 @@ function btn_SetParams_OnClick() {
         Drawwer.Graph = new Graphs(document.getElementById("tb_Result").value)
         Drawwer.ReDrawGraph()
         ResetFrameValues()
+        cb_ShowHideText_OnChange()
     } catch (error) {
         ShowPopupWindow("Error", error.message)
     }
@@ -114,6 +116,17 @@ function btn_Animate_OnClick() {
     }
     animate(0)
 }
+function cb_ShowHideText_OnChange(e) {
+    let nameElements = document.querySelectorAll("text")
+    let display = "block"
+    if (cb_ShowHideText.checked) {
+        display = "none"
+    }
+    if (document.querySelector("text").style.display == display) {
+        return
+    }
+    nameElements.forEach((element) => { element.style.display = display });
+}
 
 
 // FUNCTIONS
@@ -125,6 +138,7 @@ function InitEvents() {
         Drawwer.ShowFrame(parseInt(tb_FrameIndex.value))
         l_FrameInfo.innerHTML = `${tb_FrameIndex.value}/${tb_FrameIndex.max}`
     })
+    cb_ShowHideText.addEventListener("change", cb_ShowHideText_OnChange)
 }
 
 function InitPopup() {

@@ -1,0 +1,33 @@
+30
+##start
+start 1 2
+##end
+end 7 2
+#TOP
+t1 2 1
+t2 3 1
+t3 4 1
+t4 5 1
+#CENTER
+c1 2 2
+c2 4 2
+c3 6 2
+#BOTTOM
+b1 3 3
+b2 4 3
+b3 5 3
+b4 6 3
+start-t1
+start-c1
+t1-t2
+t2-t3
+t3-t4
+t4-c3
+c1-c2
+c1-b1
+c2-c3
+c3-end
+b1-b2
+b2-b3
+b3-b4
+b4-end
