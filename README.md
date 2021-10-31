@@ -38,12 +38,11 @@ r3 4 1
 ##end
 end 5 2
 
-start-r1(https://github.com/Dias1c/lem-in/wiki)
-start-r2(https://github.com/Dias1c/lem-in/wiki)
-r1-r3(https://github.com/Dias1c/lem-in/wiki)
-r2-end(https://github.com/Dias1c/lem-in/wiki)
-r3-end(https://github.com/Dias1c/lem-in/wiki)
-(https://github.com/Dias1c/lem-in/wiki)
+start-r1
+start-r2
+r1-r3
+r2-end
+r3-end
 L1-r2 L2-r1 
 L1-end L2-r3 L3-r2 
 L2-end L3-end 

@@ -1,10 +1,5 @@
 package anthill
 
-import (
-	"fmt"
-	"log"
-)
-
 func (q *antQueue) Enqueue(num, path, pos int) {
 	ant := &antStruct{
 		Num:  num,
@@ -65,9 +60,6 @@ func (q *sortedQueue) Enqueue(r *room, weight int, mark bool) {
 		q.Back = node
 		return
 	}
-	if q.Front == q.Back {
-		log.Fatal("Enqueue #1 front == back")
-	}
 	prev := q.Front
 	cur := prev.Next
 	for cur != nil {
@@ -91,97 +83,6 @@ func (q *sortedQueue) Dequeue() *weightNode {
 		q.Back = nil
 	} else {
 		q.Front = q.Front.Next
-	}
-	return res
-}
-
-func (q *sortedQueue) SortEnqueue(r *room, weight int, mark bool) {
-	if q.Front == nil {
-		q.Enqueue(r, weight, mark)
-		return
-	} else if q.Front.Room == r {
-		if mark {
-			if q.Front.Mark && q.Front.Weight <= weight {
-				return
-			}
-			if q.Front.Weight > weight {
-				q.Front = q.Front.Next
-				if q.Front == nil {
-					q.Back = nil
-				}
-			}
-		} else {
-			if q.Front.Mark || q.Front.Weight <= weight {
-				if q.Front.Mark && q.Front.Weight > weight {
-					q.Enqueue(r, weight, mark)
-				}
-				return
-			}
-			q.Front = q.Front.Next
-			if q.Front == nil {
-				q.Back = nil
-			}
-		}
-		q.Enqueue(r, weight, mark)
-		return
-	}
-	prev := q.Front
-	cur := prev.Next
-	for cur != nil {
-		if cur.Room == r {
-			if mark {
-				if cur.Mark && cur.Weight <= weight {
-					return
-				}
-				if cur.Weight > weight {
-					prev.Next = cur.Next
-					if prev.Next == nil {
-						q.Back = prev
-					}
-				}
-			} else {
-				if cur.Mark || cur.Weight <= weight {
-					if cur.Mark && cur.Weight > weight {
-						q.Enqueue(r, weight, mark)
-					}
-					return
-				}
-				prev.Next = cur.Next
-				if prev.Next == nil {
-					q.Back = prev
-				}
-			}
-			q.Enqueue(r, weight, mark)
-			return
-		}
-		prev = cur
-		cur = cur.Next
-	}
-	q.Enqueue(r, weight, mark)
-}
-
-func (q *sortedQueue) DebugPrint() {
-	if q.Front == nil {
-		fmt.Println("queue nil")
-		return
-	}
-	cur := q.Front
-	for cur != q.Back {
-		fmt.Printf("%s|%d --> ", cur.Room.Name, cur.Room.Weight)
-		cur = cur.Next
-	}
-	fmt.Printf("%s|%d\n", cur.Room.Name, cur.Room.Weight)
-}
-
-func (q *sortedQueue) DebugLen() int {
-	if q.Front == nil {
-		return 0
-	}
-	res := 1
-	cur := q.Front
-	for cur != q.Back {
-		cur = cur.Next
-		res++
 	}
 	return res
 }

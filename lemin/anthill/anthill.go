@@ -35,19 +35,6 @@ func (a *anthill) ValidateByFieldInfo() error {
 	return nil
 }
 
-// // Set nil data for anthill
-// func (a *anthill) ClearData() {
-// 	for _, room := range a.Rooms {
-// 		room.ParentIn = nil
-// 		room.ParentOut = nil
-// 		room.PathsIn = nil
-// 		room.PathsOut = nil
-// 	}
-// 	a.Rooms = nil
-// 	a.Result = nil
-// 	a.FieldInfo = nil
-// }
-
 // ReadDataFromLine - reading the line, it replenishes the data about the anthill. (FieldInfo understands what the string is)
 func (a *anthill) ReadDataFromLine(line string) error {
 	if line == "" || strings.HasPrefix(line, "#") && !strings.HasPrefix(line, "##") {

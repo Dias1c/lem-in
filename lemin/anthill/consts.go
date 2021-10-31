@@ -1,7 +1,5 @@
 package anthill
 
-// var MAX_INT int = int(^uint(0) >> 1)
-
 // Modes for FieldInfo
 const (
 	FIELD_ANTS  = iota // On Reading Ants
