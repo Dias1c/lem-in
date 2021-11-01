@@ -1,7 +1,6 @@
 # lem-in
 The task of the project is [here](https://github.com/01-edu/public/tree/master/subjects/lem-in)<br>
-Wiki [here](https://github.com/Dias1c/lem-in/wiki)
-Thx for [him](https://github.com/elijahkash)
+Wiki [here](https://github.com/Dias1c/lem-in/wiki) and thx for [him](https://github.com/elijahkash)
 # Chapters
 - [Briefly about the project](#Briefly-about-the-project)
 - [Graphs in file](#Graphs-in-file)
@@ -10,7 +9,8 @@ Thx for [him](https://github.com/elijahkash)
 - [Authors](#Authors)
 # Briefly about the project
 This is a console program that builds a graph based on the data transmitted by the user and distributes the ants along the paths so that everyone reaches from `A` to `B` in a minimum of steps.
-
+![lem-in preview](https://github.com/Dias1c/wiki/blob/master/lem-in/images/lem-in_preview(v1).gif?raw=true)
+> Also you can use web version for visualize your result. To do this, insert the map with result into the `text result` block and click on <kbd>Set Params</kbd>. Now your graph is represented graphically.
 # How use program
 > Program takes only 1 argument. 
 It can be filename or flags.

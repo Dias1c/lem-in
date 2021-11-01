@@ -122,7 +122,7 @@ function cb_ShowHideText_OnChange(e) {
     if (cb_ShowHideText.checked) {
         display = "none"
     }
-    if (document.querySelector("text").style.display == display) {
+    if (document.querySelector("text") == null || document.querySelector("text").style.display == display) {
         return
     }
     nameElements.forEach((element) => { element.style.display = display });
