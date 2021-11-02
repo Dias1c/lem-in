@@ -167,7 +167,7 @@ func checkEffective(terrain *anthill) bool {
 		}
 	}
 	curStepsCount := fastCalcSteps(terrain.AntsCount, newPaths)
-	if terrain.StepsCount == 0 || terrain.StepsCount > curStepsCount {
+	if terrain.StepsCount == 0 || terrain.StepsCount >= curStepsCount {
 		terrain.StepsCount = curStepsCount
 		terrain.Result.Paths = newPaths
 		return curStepsCount != 1
