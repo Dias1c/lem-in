@@ -166,8 +166,20 @@ func checkEffective(terrain *anthill) bool {
 			i++
 		}
 	}
-	curStepsCount := fastCalcSteps(terrain.AntsCount, newPaths)
-	if terrain.StepsCount == 0 || terrain.StepsCount >= curStepsCount {
+	curStepsCount, used := fastCalcSteps(terrain.AntsCount, newPaths)
+	// For debug
+	// fmt.Printf("Steps: %d\n", curStepsCount)
+	// for i := range newPaths {
+	// 	start := newPaths[i].Front
+	// 	fmt.Printf("Len: %d | %s", newPaths[i].Len, start.Room.Name)
+	// 	for start.Room != endRoom {
+	// 		start = start.Next
+	// 		fmt.Printf(" --> %s", start.Room.Name)
+	// 	}
+	// 	fmt.Println()
+	// }
+	// fmt.Println()
+	if terrain.StepsCount == 0 || (terrain.StepsCount >= curStepsCount && used) {
 		terrain.StepsCount = curStepsCount
 		terrain.Result.Paths = newPaths
 		return curStepsCount != 1
@@ -176,21 +188,29 @@ func checkEffective(terrain *anthill) bool {
 }
 
 // fastCalcSteps - calculate steps for paths and ants count
-func fastCalcSteps(ants int, paths []*list) int {
+func fastCalcSteps(ants int, paths []*list) (int, bool) {
 	steps, lossPerStep := 0, 0
+	max, maxUsed := 0, false
 	comingAnts := make(map[int]int)
 	for _, value := range paths {
 		comingAnts[value.Len]++
+		if max < value.Len {
+			max = value.Len
+		}
 	}
 	if comingAnts[1] > 0 {
-		return 1
+		return 1, true
 	}
 	for ants > 0 {
 		steps++
-		lossPerStep += comingAnts[steps]
 		ants -= lossPerStep
+		if steps == max && ants >= comingAnts[max] {
+			maxUsed = true
+		}
+		lossPerStep += comingAnts[steps]
+		ants -= comingAnts[steps]
 	}
-	return steps
+	return steps, maxUsed
 }
 
 // calcSteps LOGIC
