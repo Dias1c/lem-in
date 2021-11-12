@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	general "lem-in/general"
-	routes "lem-in/web/routes"
-	routesApi "lem-in/web/routes/api"
+	general "github.com/Dias1c/lem-in/general"
+	routes "github.com/Dias1c/lem-in/web/routes"
+	routesApi "github.com/Dias1c/lem-in/web/routes/api"
 )
 
 // RunServer - starts server with setted port

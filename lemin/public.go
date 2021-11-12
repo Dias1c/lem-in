@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"lem-in/general"
 	"os"
 	"strings"
+
+	"github.com/Dias1c/lem-in/general"
 )
 
 // RunProgramWithFile - path is filepath

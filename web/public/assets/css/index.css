@@ -98,6 +98,8 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+
+    cursor: pointer;
 }
 
 .input_title{
@@ -105,11 +107,11 @@
 }
 
 .input_text{
-    resize: none;
+    resize: vertical;
     border: 1px dashed #313131;
     min-height: 200px;
-
-    transition: 0.2s;
+    max-height: 800px;
+    transition: border linear 0.2s;
 }
 
 .input_number{

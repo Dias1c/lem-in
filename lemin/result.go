@@ -2,7 +2,8 @@ package lemin
 
 import (
 	"bufio"
-	"lem-in/lemin/anthill"
+
+	"github.com/Dias1c/lem-in/lemin/anthill"
 )
 
 // getResult - returns result, nil if shortest disjoint paths was found

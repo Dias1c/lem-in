@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"lem-in/lemin"
-	"lem-in/web"
 	"os"
 	"strings"
+
+	"github.com/Dias1c/lem-in/lemin"
+	"github.com/Dias1c/lem-in/web"
 )
 
 func main() {

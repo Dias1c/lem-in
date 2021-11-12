@@ -22,12 +22,12 @@ It can be filename or flags.
 
 For run project:
 ```bash
-go run . (filename | --http=:port | --file=filename)
+go run ./cmd (filename | --http=:port | --file=filename)
 ```
 ### Example:
 Run program:
 ```bash
-$ go run . example.txt
+$ go run ./cmd example.txt
 #My comment
 3
 ##start
@@ -49,7 +49,7 @@ L2-end L3-end
 ```
 Run visualization:
 ```bash
-$ go run . --http=:8080
+$ go run ./cmd --http=:8080
 YYYY/MM/DD hh:mm:ss Server started on http://localhost:8080
 ```
 

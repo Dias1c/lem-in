@@ -6,9 +6,10 @@ import (
 	"log"
 	"net/http"
 
-	lemin "lem-in/lemin"
+	lemin "github.com/Dias1c/lem-in/lemin"
 )
 
+// LeminHandler - handler func wich inputs data about graph in json
 func LeminHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("API LeminHandler\t%v\t%v", r.Method, r.URL.Path)
 	if r.URL.Path != "/api/lemin" {
