@@ -1,10 +1,10 @@
 3
 ##start
-start 0 0
+start 1 1
 ##end
-end 1 1
-mid0 2 2
-mid1 3 3
+end 2 2
+mid0 3 2
+mid1 2 3
 start-mid0
 mid0-mid1
 mid1-start

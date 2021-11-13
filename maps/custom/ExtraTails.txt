@@ -1,8 +1,8 @@
 1
 ##start
-start 0 0
+start 0 3
 ##end
-end 0 1
+end 4 3
 
 # lvl 1
 j 1 1
@@ -28,14 +28,14 @@ r 3 5
 s 3 6
 
 # lvl 4
-w 4 1
+w 4 5
 
 #Bad Paths
-o 10 1
-p 10 2
-x 100 1
-z 100 2
-y 100 3
+o 6 1
+p 6 2
+x 6 4
+z 6 5
+y 5 5
 
 start-j
 start-k

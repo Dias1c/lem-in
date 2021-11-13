@@ -3,7 +3,7 @@ a 0 0
 ##start
 b 0 4
 c 2 2
-d 4 0
+d 5 0
 e 3 4
 f 6 2
 g 6 4
@@ -13,28 +13,28 @@ j 9 4
 k 9 6
 l 7 8
 
-new1 5 0
-new2 5 4
-new3 5 9
+b1 4 0
+b2 4 4
+b3 4 6
 
 ##end
 m 12 4
 n 12 8
 a-b
 b-e
-e-new2
-new2-g
+e-b2
+b2-g
 g-j
 j-m
 a-d
-d-new1
-new1-i
+d-b1
+b1-i
 i-j
 b-c
 c-f
 f-g
-e-new3
-new3-h
+e-b3
+b3-h
 h-l
 l-n
 n-m
