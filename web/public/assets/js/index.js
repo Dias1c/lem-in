@@ -3,9 +3,11 @@
 var btn_SendContent = document.getElementById("btn_SendContent")
 var btn_SetParams = document.getElementById("btn_SetParams")
 var btn_Animate = document.getElementById("btn_Animate")
+var btn_ResultResize = document.getElementById("btn_ResultResize")
 var tb_FrameIndex = document.getElementById("tb_FrameIndex")
 var l_FrameInfo = document.getElementById("l_FrameInfo")
 var tb_Content = document.getElementById("tb_Content")
+var b_Result = document.getElementById("b_result")
 var tb_Result = document.getElementById("tb_Result")
 var IsFramePlay = false
 var cb_ShowHideText = document.getElementById("cb_ShowHideText")
@@ -116,6 +118,22 @@ function btn_Animate_OnClick() {
     }
     animate(0)
 }
+function btn_ResultResize_OnClick() {
+    if (btn_ResultResize.checked == null) {
+        btn_ResultResize.checked = true
+    }
+    switch (btn_ResultResize.checked) {
+        case true:
+            b_Result.classList.add("result--maximize")
+            btn_ResultResize.classList.add("btn--green")
+            break;
+        case false:
+            b_Result.classList.remove("result--maximize")
+            btn_ResultResize.classList.remove("btn--green")
+            break;
+    }
+    btn_ResultResize.checked = !btn_ResultResize.checked
+}
 function cb_ShowHideText_OnChange(e) {
     let nameElements = document.querySelectorAll("text")
     let display = "block"
@@ -132,6 +150,7 @@ function cb_ShowHideText_OnChange(e) {
 // FUNCTIONS
 function InitEvents() {
     btn_SendContent.addEventListener("click", btn_SendContent_OnClick)
+    btn_ResultResize.addEventListener("click", btn_ResultResize_OnClick)
     btn_SetParams.addEventListener("click", btn_SetParams_OnClick)
     btn_Animate.addEventListener("click", btn_Animate_OnClick)
     tb_FrameIndex.addEventListener("input", () => {

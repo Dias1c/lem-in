@@ -28,11 +28,28 @@
 .btn:active {
     transform: scale(0.95);
 }
+.btn:checked{
+    background-color: green;
+}
 
 .btn:disabled {
     background-color: #BABECC;
     cursor:not-allowed;
     box-shadow: none;
+}
+
+
+/*  */
+.btn--icon{
+    display: block;
+    padding: 2px;
+    width: max-content;
+    height: max-content;
+}
+
+.btn--icon img{
+    display: block;
+    width: 16px;
 }
 
 .btn--close{
@@ -61,4 +78,20 @@
 }
 .btn--close::after{
     transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.btn--red{
+    background-color: rgb(255, 29, 29);
+}
+
+.btn--gray{
+    background-color: rgb(85, 85, 85);
+}
+
+.btn--blue{
+    background-color: rgb(29, 82, 255);
+}
+
+.btn--green{
+    background-color: green;
 }

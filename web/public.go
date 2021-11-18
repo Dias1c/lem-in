@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -23,7 +22,7 @@ func RunServer(port string) {
 		general.CloseProgram(err)
 	}
 
-	// Init Handlers + Run Server (To Do)
+	// Init Handlers + Run Server
 	mux := http.NewServeMux()
 	// FS
 	assets := http.FileServer(http.Dir("web/public/assets/"))
@@ -33,15 +32,14 @@ func RunServer(port string) {
 	// APIs
 	mux.HandleFunc("/api/lemin", routesApi.LeminHandler)
 	// Start Listen
-	addr := fmt.Sprintf("localhost%v", port)
 	server := http.Server{
-		Addr:         addr,
+		Addr:         port,
 		Handler:      mux,
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
 		IdleTimeout:  15 * time.Second,
 	}
-	log.Printf("Server started on http://%v", addr)
+	log.Printf("Server started on http://localhost%v", port)
 	err = server.ListenAndServe()
 	if err != nil {
 		general.CloseProgram(err)
