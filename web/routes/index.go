@@ -5,13 +5,7 @@ import (
 	"net/http"
 )
 
-// Should Use? Or use Async Js?
-type IndexPage struct {
-	Input        string
-	Result       string
-	ErrorMessage string
-}
-
+// IndexHandler - Main Page handler
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("IndexHandler\t%v\t%v", r.Method, r.URL.Path)
 	if r.URL.Path != "/" {

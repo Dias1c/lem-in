@@ -95,9 +95,8 @@ func (a *anthill) Match() error {
 			// path not found, then check for prev path count
 			if a.StepsCount > 0 {
 				return nil
-			} else {
-				return errors.New("path not found")
 			}
+			return errors.New("path not found")
 		}
 		if !checkEffective(a) {
 			return nil

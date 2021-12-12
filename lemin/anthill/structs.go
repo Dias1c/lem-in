@@ -1,6 +1,6 @@
 package anthill
 
-// The found paths are saved in Result. Using for save write result to writer
+// The found paths are saved in Result. Using for write result to writer
 type Result struct {
 	AntsCount int
 	Paths     []*list
@@ -37,7 +37,7 @@ type fieldInfo struct {
 	UsingCoordinates map[int]map[int]bool // Chekking for unique Coordinates on Rooms
 }
 
-// List of node wich has room.
+// List of node which has room.
 type node struct {
 	Room *room
 	Next *node

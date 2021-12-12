@@ -111,6 +111,10 @@
     border: 1px dashed #313131;
     min-height: 200px;
     max-height: 800px;
+
+    white-space: pre;
+    overflow-wrap: normal;
+
     transition: border linear 0.2s;
 }
 

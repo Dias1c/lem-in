@@ -260,7 +260,6 @@ func calcSteps(antsCount int, sortedPaths []*list) (int, []int) {
 			for i := 0; i < antsCount; i++ {
 				result[i]++
 			}
-			antsCount = 0
 		}
 	}
 	return steps, result
