@@ -3,15 +3,16 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	lemin "github.com/Dias1c/lem-in/lemin"
+	helper "github.com/Dias1c/lem-in/web/helper"
 )
 
 // LeminHandler - handler func which inputs data about graph in json
 func LeminHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("API LeminHandler\t%v\t%v", r.Method, r.URL.Path)
+	// log.Printf("API LeminHandler\t%v\t%v", r.Method, r.URL.Path)
+	helper.LogHandle("LeminHandler", r)
 	if r.URL.Path != "/api/lemin" {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return

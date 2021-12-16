@@ -27,6 +27,8 @@ func RunServer(port string) {
 	// FS
 	assets := http.FileServer(http.Dir("web/public/assets/"))
 	mux.Handle("/assets/", http.StripPrefix("/assets/", assets))
+	maps := http.FileServer(http.Dir("maps/"))
+	mux.Handle("/maps/", http.StripPrefix("/maps/", maps))
 	// Pages
 	mux.HandleFunc("/", routes.IndexHandler) // Index Page
 	// APIs

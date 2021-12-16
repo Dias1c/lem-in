@@ -73,3 +73,5 @@ x-z
 z-y
 end-x
 end-y
+# 1 ant 1 path 4 steps
+# 3 ant 2 path 5 steps

@@ -26,3 +26,5 @@ start-8
 10-3
 2-5
 2-10
+# 1 ants 1 path 4 steps
+# 5 ants 2 path 7 steps

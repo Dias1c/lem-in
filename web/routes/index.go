@@ -1,13 +1,15 @@
 package routes
 
 import (
-	"log"
 	"net/http"
+
+	helper "github.com/Dias1c/lem-in/web/helper"
 )
 
 // IndexHandler - Main Page handler
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("IndexHandler\t%v\t%v", r.Method, r.URL.Path)
+	// log.Printf("IndexHandler\t%v\t%v", r.Method, r.URL.Path)
+	helper.LogHandle("IndexHandler", r)
 	if r.URL.Path != "/" {
 		RenderErrorPage(w, "", http.StatusText(http.StatusNotFound))
 		return

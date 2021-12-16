@@ -30,6 +30,6 @@ l2-l3
 l3-l4
 l4-l5
 l5-end
-#RESULTS 10 ants 3 paths 7 steps
-#RESULTS 5  ants 2 paths 6 steps
-#RESULTS 2  ants 1 paths 4 steps
+# 10 ants 3 paths 7 steps
+# 5  ants 2 paths 6 steps
+# 2  ants 1 paths 4 steps
