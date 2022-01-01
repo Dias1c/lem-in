@@ -47,6 +47,11 @@ L1-r2 L2-r1
 L1-end L2-r3 L3-r2 
 L2-end L3-end 
 ```
+Also Get Steps Count:
+```bash
+$ go run ./cmd example.txt | grep '^L' | wc -l
+3
+```
 Run visualization:
 ```bash
 $ go run ./cmd --http=:8080
