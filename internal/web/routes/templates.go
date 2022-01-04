@@ -10,7 +10,7 @@ var Templates *template.Template
 
 // InitTemplates - init	Templates
 func InitTemplates() error {
-	files, err := template.ParseFiles("web/public/index.html", "web/public/error.html")
+	files, err := template.ParseFiles("internal/web/public/index.html", "internal/web/public/error.html")
 	if err != nil {
 		return err
 	}

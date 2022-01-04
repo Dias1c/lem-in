@@ -5,28 +5,27 @@ import (
 	"net/http"
 	"time"
 
-	general "github.com/Dias1c/lem-in/general"
-	routes "github.com/Dias1c/lem-in/web/routes"
-	routesApi "github.com/Dias1c/lem-in/web/routes/api"
+	routes "github.com/Dias1c/lem-in/internal/web/routes"
+	routesApi "github.com/Dias1c/lem-in/internal/web/routes/api"
 )
 
 // RunServer - starts server with setted port
-func RunServer(port string) {
+func RunServer(port string) error {
 	var err error
-	err = validatePort(port)
+	err = ValidatePort(port)
 	if err != nil {
-		general.CloseProgram(err)
+		return err
 	}
 	err = routes.InitTemplates()
 	if err != nil {
-		general.CloseProgram(err)
+		return err
 	}
 
 	// Init Handlers + Run Server
 	mux := http.NewServeMux()
 	// FS
-	assets := http.FileServer(http.Dir("web/public/assets/"))
-	mux.Handle("/assets/", http.StripPrefix("/assets/", assets))
+	fs := http.FileServer(http.Dir("internal/web/public/assets/"))
+	mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
 	maps := http.FileServer(http.Dir("maps/"))
 	mux.Handle("/maps/", http.StripPrefix("/maps/", maps))
 	// Pages
@@ -44,6 +43,7 @@ func RunServer(port string) {
 	log.Printf("Server started on http://localhost%v", port)
 	err = server.ListenAndServe()
 	if err != nil {
-		general.CloseProgram(err)
+		return err
 	}
+	return nil
 }

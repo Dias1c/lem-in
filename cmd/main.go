@@ -6,13 +6,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Dias1c/lem-in/lemin"
-	"github.com/Dias1c/lem-in/web"
+	"github.com/Dias1c/lem-in/internal/lemin"
+	"github.com/Dias1c/lem-in/internal/web"
 )
 
 func main() {
 	if len(os.Args) != 2 {
-		fmt.Println("ERROR: Program takes only 1 argument (fileName or --flags)!")
+		fmt.Println("ERROR: Program takes argument (fileName or --flags)!")
 		os.Exit(1)
 	}
 	argument := os.Args[1]
@@ -26,12 +26,12 @@ func main() {
 		if *port != "" {
 			web.RunServer(*port)
 		} else if *filename != "" {
-			lemin.RunProgramWithFile(*filename)
+			lemin.RunProgramWithFile(*filename, true)
 		} else { // Default = Help
 			flag.Usage()
 			os.Exit(1)
 		}
 	} else { // Default
-		lemin.RunProgramWithFile(argument)
+		lemin.RunProgramWithFile(argument, false)
 	}
 }

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	lemin "github.com/Dias1c/lem-in/lemin"
-	helper "github.com/Dias1c/lem-in/web/helper"
+	lemin "github.com/Dias1c/lem-in/internal/lemin"
+	helper "github.com/Dias1c/lem-in/internal/web/helper"
 )
 
 // LeminHandler - handler func which inputs data about graph in json
@@ -49,7 +49,7 @@ Relations (roomName-roomName)
 			return
 		}
 		// Start Match result
-		if lErr := lemin.WriteResultByContent(w, data.Content); lErr != nil {
+		if lErr := lemin.WriteResultByContent(w, data.Content, true); lErr != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "%v", lErr.Error())
 			return

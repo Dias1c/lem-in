@@ -3,11 +3,11 @@ package lemin
 import (
 	"bufio"
 
-	"github.com/Dias1c/lem-in/lemin/anthill"
+	"github.com/Dias1c/lem-in/internal/lemin/anthill"
 )
 
-// getResult - returns result, nil if shortest disjoint paths was found
-func getResult(scanner *bufio.Scanner) (*anthill.Result, error) {
+// GetResult - returns result, nil if shortest disjoint paths was found
+func GetResult(scanner *bufio.Scanner) (*anthill.Result, error) {
 	terrain := anthill.CreateAnthill()
 	var err error
 	for scanner.Scan() {

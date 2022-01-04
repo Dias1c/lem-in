@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	helper "github.com/Dias1c/lem-in/web/helper"
+	helper "github.com/Dias1c/lem-in/internal/web/helper"
 )
 
 // IndexHandler - Main Page handler
