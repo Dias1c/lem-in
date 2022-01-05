@@ -22,22 +22,22 @@ func WriteResultByFilePath(w io.Writer, path string, writeContent bool) error {
 	file, err := os.Open(path)
 	defer file.Close()
 	if err != nil {
-		return err
+		return fmt.Errorf("WriteResultByFilePath: %w", err)
 	} else if fInfo, _ := file.Stat(); fInfo.IsDir() {
 		err = fmt.Errorf("%v is directory", fInfo.Name())
-		return err
+		return fmt.Errorf("WriteResultByFilePath: %w", err)
 	}
 
 	scanner := bufio.NewScanner(file)
 	result, err := GetResult(scanner)
 	if err != nil {
-		return err
+		return fmt.Errorf("WriteResultByFilePath: %w", err)
 	}
 	if writeContent {
 		file.Seek(0, io.SeekStart)
 		_, err = io.Copy(w, file)
 		if err != nil {
-			return err
+			return fmt.Errorf("WriteResultByFilePath: %w", err)
 		}
 		fmt.Fprint(w, "\n\n# result\n")
 	}
@@ -51,7 +51,7 @@ func WriteResultByContent(w io.Writer, content string, writeContent bool) error 
 	scanner := bufio.NewScanner(strings.NewReader(content))
 	result, err := GetResult(scanner)
 	if err != nil {
-		return err
+		return fmt.Errorf("WriteResultByContent: %w", err)
 	}
 
 	if writeContent {
