@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -24,7 +25,11 @@ func main() {
 	// Start Program
 	if strings.HasPrefix(argument, "--") { // if has flags
 		if *port != "" {
-			web.RunServer(*port)
+			err := web.RunServer(*port)
+			if err != nil {
+				log.Println(err)
+				os.Exit(1)
+			}
 		} else if *filename != "" {
 			lemin.RunProgramWithFile(*filename, true)
 		} else { // Default = Help
